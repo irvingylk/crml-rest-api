@@ -67,3 +67,10 @@ class RawCommentItemApiView(APIView):
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class RawCommentItemsApiView(APIView):
+
+    def get(self, request, format=None):
+
+        serializer = serializers.RawCommentItemSerializer(models.RawCommentItem.objects.All())
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
