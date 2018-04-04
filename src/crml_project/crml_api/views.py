@@ -26,7 +26,6 @@ class RawCommentItemApiView(APIView):
     def get(self, request, id, format=None):
 
         rawCommentObj = self.get_object(id)
-        time.sleep(3)
         if(rawCommentObj == None):
 
             return Response({'tag':-1})
