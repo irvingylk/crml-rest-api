@@ -71,6 +71,6 @@ class RawCommentItemsApiView(APIView):
 
     def get(self, request, format=None):
 
-        serializer = serializers.RawCommentItemSerializer(models.RawCommentItem.objects.All())
+        serializer = serializers.RawCommentItemSerializer(models.RawCommentItem.objects.all(), many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
