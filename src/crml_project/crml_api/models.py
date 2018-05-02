@@ -26,7 +26,7 @@ class Review(models.Model):
 
 class ReviewTag(models.Model):
 
-    reviewId = models.OneToOneField(Review)
+    reviewId = models.ForeignKey(Review, unique=True)
     tag = models.ForeignKey(Tag)
 
     def __str__(self):
@@ -35,7 +35,7 @@ class ReviewTag(models.Model):
 
 class Reviewed(models.Model):
 
-    reviewId = models.OneToOneField(Review)
+    reviewId = models.ForeignKey(Review, unique=True)
     reviewed = models.BooleanField(default=False)
 
     def __str__(self):
