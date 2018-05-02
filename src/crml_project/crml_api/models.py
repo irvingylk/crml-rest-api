@@ -31,7 +31,7 @@ class ReviewTag(models.Model):
 
     def __str__(self):
 
-        return self.reviewId + " : " + self.tag
+        return self.tag
 
 class Reviewed(models.Model):
 
@@ -40,7 +40,7 @@ class Reviewed(models.Model):
 
     def __str__(self):
 
-        return self.reviewId + " : " + self.reviewed
+        return self.reviewed
 
 
 class Training(models.Model):
