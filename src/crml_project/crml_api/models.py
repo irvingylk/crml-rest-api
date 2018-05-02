@@ -40,7 +40,7 @@ class Reviewed(models.Model):
 
     def __str__(self):
 
-        return self.reviewed
+        return 'Reviewed'
 
 
 class Training(models.Model):
