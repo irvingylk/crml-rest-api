@@ -6,7 +6,7 @@ PROJECT_GIT_URL='https://github.com/irvingylk/crml-rest-api.git'
 PROJECT_BASE_PATH='/usr/local/apps'
 VIRTUALENV_BASE_PATH='/usr/local/virtualenvs'
 
-# Set Ubuntu Language
+# Set Ubuntu Languages
 locale-gen en_GB.UTF-8
 
 # Install Python, SQLite and pip
