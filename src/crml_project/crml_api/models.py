@@ -31,7 +31,7 @@ class ReviewTag(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.reviewId.__str__
 
 class Reviewed(models.Model):
 
@@ -40,7 +40,7 @@ class Reviewed(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.reviewId.__str__
 
 
 class Training(models.Model):
@@ -55,7 +55,7 @@ class Training(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.feature
 
 
 class Code(models.Model):
@@ -65,7 +65,7 @@ class Code(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.code_content
 
 class People(models.Model):
 
@@ -74,7 +74,7 @@ class People(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.people_content
 
 class Issue(models.Model):
 
@@ -83,7 +83,7 @@ class Issue(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.issue_content
 
 class link(models.Model):
 
@@ -92,7 +92,7 @@ class link(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.link_content
 
 
 class Image(models.Model):
@@ -103,5 +103,5 @@ class Image(models.Model):
 
     def __str__(self):
 
-        return self.reviewId
+        return self.image_src
 
