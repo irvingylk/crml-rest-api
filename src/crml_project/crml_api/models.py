@@ -14,7 +14,7 @@ class Tag(models.Model):
 
 class Review(models.Model):
 
-    reviewId = models.CharField(max_length=200, primary_key=True)
+    reviewId = models.CharField(max_length=50, primary_key=True)
     review_content = models.CharField(max_length=5000)
     review_content_length = models.IntegerField()
     is_inline_review = models.BooleanField(default=False)
@@ -22,25 +22,25 @@ class Review(models.Model):
 
     def __str_(self):
 
-        return self.review_content
+        return self.reviewId
 
 class ReviewTag(models.Model):
 
-    reviewId = models.ForeignKey(Review, unique=True)
+    reviewId = models.OneToOneField(Review)
     tag = models.ForeignKey(Tag)
 
     def __str__(self):
 
-        return self.tag
+        return self.reviewId
 
 class Reviewed(models.Model):
 
-    reviewId = models.ForeignKey(Review, unique=True)
+    reviewId = models.OneToOneField(Review)
     reviewed = models.BooleanField(default=False)
 
     def __str__(self):
 
-        return 'Reviewed'
+        return self.reviewId
 
 
 class Training(models.Model):
@@ -53,6 +53,10 @@ class Training(models.Model):
 
         unique_together = ('reviewId', 'feature')
 
+    def __str__(self):
+
+        return self.reviewId
+
 
 class Code(models.Model):
 
@@ -61,7 +65,7 @@ class Code(models.Model):
 
     def __str_(self):
 
-        return self.code_content
+        return self.reviewId
 
 class People(models.Model):
 
@@ -70,7 +74,7 @@ class People(models.Model):
 
     def __str_(self):
 
-        return self.people_content
+        return self.reviewId
 
 class Issue(models.Model):
 
@@ -79,7 +83,7 @@ class Issue(models.Model):
 
     def __str_(self):
 
-        return self.issue_content
+        return self.reviewId
 
 class link(models.Model):
 
@@ -88,7 +92,7 @@ class link(models.Model):
 
     def __str_(self):
 
-        return self.link_content
+        return self.reviewId
 
 
 class Image(models.Model):
@@ -99,5 +103,5 @@ class Image(models.Model):
 
     def __str_(self):
 
-        return self.image_src
+        return self.reviewId
 
