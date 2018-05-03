@@ -91,7 +91,7 @@ class ReviewApiView(APIView):
         review = models.Review.objects.get(reviewId=id)
 
         if review != None:
-
+            
             review.delete()
             return Response({'res':1},status=status.HTTP_200_OK)
 

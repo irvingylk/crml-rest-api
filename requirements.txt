@@ -1,5 +1,6 @@
 Django==1.11
 djangorestframework==3.6.2
+django-extensions==2.0.7
 pytz==2018.3
 six==1.11.0
 uWSGI==2.0.15
