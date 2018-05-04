@@ -10,6 +10,4 @@ admin.site.register(models.People)
 admin.site.register(models.Issue)
 admin.site.register(models.link)
 admin.site.register(models.Image)
-admin.site.register(models.ReviewTag)
-admin.site.register(models.Reviewed)
 

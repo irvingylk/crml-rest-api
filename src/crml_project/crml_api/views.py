@@ -17,23 +17,23 @@ class ReviewApiView(APIView):
 
         try:
             
-            return models.ReviewTag.objects.get(reviewId=id)
+            return models.Review.objects.get(reviewId=id)
 
-        except models.ReviewTag.DoesNotExist:
+        except models.Review.DoesNotExist:
             return None
 
 
     def get(self, request, id, format=None):
 
-        reviewTag = self.get_object(id)
+        review = self.get_object(id)
 
-        if(reviewTag == None):
+        if(review == None):
 
             return Response({'tag':-1})
 
         else:
 
-            return Response({'tag':reviewTag.tag.tagId})
+            return Response({'tag':review.tag.tagId})
 
     def post(self, request, format=None):
 
@@ -42,13 +42,7 @@ class ReviewApiView(APIView):
         if reviewSerializer.is_valid():
 
             reviewSerializer.save()
-            reviewTagSerializer = serializers.ReviewTagSerializer(data=request.data)
-            if reviewTagSerializer.is_valid():
-                reviewTagSerializer.save()
 
-            reviewedSerializer = serializers.ReviewedSerializer(data=request.data)
-            if reviewedSerializer.is_valid():
-                reviewedSerializer.save()
 
             codeSerializer = serializers.CodeSerializer(data=request.data.get('codes'), many=True)
             if codeSerializer.is_valid():
@@ -77,7 +71,7 @@ class ReviewApiView(APIView):
     def put(self, request, id, format=None):
 
         review = self.get_object(id)
-        serializer = serializers.ReviewTagSerializer(review, data=request.data)
+        serializer = serializers.ReviewSerializer(review, data=request.data)
         
         if serializer.is_valid():
             serializer.save()

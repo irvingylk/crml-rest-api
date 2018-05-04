@@ -5,19 +5,9 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Review
-        fields = ('reviewId', 'review_content', 'review_content_length','is_inline_review')
+        fields = ('reviewId', 'review_content', 'review_content_length','is_inline_review','extracted','reviewed','tag')
 
-class ReviewTagSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.ReviewTag
-        fields = ('reviewId','tag')
-
-class ReviewedSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.Reviewed
-        fields = ('reviewId','reviewed')
+        
 
 
 

@@ -15,39 +15,23 @@ class Tag(models.Model):
 class Review(models.Model):
 
     reviewId = models.CharField(max_length=50, primary_key=True)
-    review_content = models.CharField(max_length=5000)
-    review_content_length = models.IntegerField()
+    review_content = models.CharField(max_length=5000, default='')
+    review_content_length = models.IntegerField(default=0)
     is_inline_review = models.BooleanField(default=False)
     extracted = models.BooleanField(default=False)
-
-    def __str__(self):
-
-        return self.reviewId
-
-class ReviewTag(models.Model):
-
-    reviewId = models.OneToOneField(Review)
+    reviewed = models.BooleanField(default=False)
     tag = models.ForeignKey(Tag)
 
     def __str__(self):
 
-        return str(self.reviewId)
-
-class Reviewed(models.Model):
-
-    reviewId = models.OneToOneField(Review)
-    reviewed = models.BooleanField(default=False)
-
-    def __str__(self):
-
-        return str(self.reviewId)
+        return self.reviewId
 
 
 class Training(models.Model):
 
     reviewId = models.ForeignKey(Review)
     feature = models.CharField(max_length=500)
-    value = models.IntegerField()
+    value = models.DecimalField(max_digits=10, decimal_places=5)
 
     class Meta:
 
