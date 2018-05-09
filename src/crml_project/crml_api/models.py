@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Tag(models.Model):
-
+    
     tagId = models.IntegerField(primary_key=True)
     description = models.CharField(max_length=50)
 
