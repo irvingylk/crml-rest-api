@@ -2,11 +2,14 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.http import HttpResponse
 import time
 
 
 from . import serializers
 from . import models
+
+from scripts import extract_features, evaluate_models
 
 # Create your views here.
 
@@ -90,3 +93,12 @@ class ReviewApiView(APIView):
             return Response({'res':1},status=status.HTTP_200_OK)
 
         return Response({'res':0},status=status.HTTP_400_BAD_REQUEST)
+
+
+def MLModels(request):
+
+    extract_features.extractFeatures()
+    result = evaluate_models.evaluateModels()
+    tags = list(models.Tag.objects.values_list('description', flat=True))
+    
+    return render(request, 'models.html', {'result' :result, 'tags':tags})

@@ -1,9 +1,13 @@
 from crml_api.models import *
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, ENGLISH_STOP_WORDS
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, ENGLISH_STOP_WORDS
 from decimal import Decimal
-#import pickle
 
 def run(*args):
+
+    extractFeatures()
+
+
+def extractFeatures():
 
     reviews = Review.objects.filter(reviewed=True, extracted=False)
     vectorizer = CountVectorizer(strip_accents='ascii', stop_words=ENGLISH_STOP_WORDS)

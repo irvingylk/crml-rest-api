@@ -1,0 +1,1047 @@
+[
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$36000$D4Y39OKbSVqK$PGGuAdOispjmrUdUQaDRfVRasmqH81zKDpo8KnTQfGY=",
+        "last_login": "2018-05-10T08:13:33.140Z",
+        "is_superuser": true,
+        "username": "superuser",
+        "first_name": "",
+        "last_name": "",
+        "email": "irvingylk@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2018-05-08T10:24:36.327Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 1,
+    "fields": {
+        "description": "Check"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 2,
+    "fields": {
+        "description": "Solution Approach"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 3,
+    "fields": {
+        "description": "Organization"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 4,
+    "fields": {
+        "description": "Support By Language"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 5,
+    "fields": {
+        "description": "Textual"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 6,
+    "fields": {
+        "description": "Larger Defects"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 7,
+    "fields": {
+        "description": "Support"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 8,
+    "fields": {
+        "description": "Resource"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 9,
+    "fields": {
+        "description": "Logic"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 10,
+    "fields": {
+        "description": "Interface"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 11,
+    "fields": {
+        "description": "Traceability"
+    }
+},
+{
+    "model": "crml_api.tag",
+    "pk": 12,
+    "fields": {
+        "description": "Process"
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "123054180",
+    "fields": {
+        "review_content": "Like _Reviewer said we don't use environment variables to change behavior. What about using the already existent configuration _Code\n _File  As the default is _Code we could check the value of those flags and only add _Code when it is _Code. If that config is anything but _Code we use the config.",
+        "review_content_length": 54,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 8
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "154541543",
+    "fields": {
+        "review_content": "Why was every line in this hash changed when you only added a single line?",
+        "review_content_length": 16,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "157031593",
+    "fields": {
+        "review_content": "I don't understand _Code. How does it affect _Code?",
+        "review_content_length": 10,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 11
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "159113879",
+    "fields": {
+        "review_content": "This instance method is currently private, so I think it can be removed without deprecation.",
+        "review_content_length": 16,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 3
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "159647719",
+    "fields": {
+        "review_content": "Can you update the test name as it no longer logs the backtrace?",
+        "review_content_length": 14,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "164405126",
+    "fields": {
+        "review_content": "I think we should get rid of the _Code and use _Code rather than a case statement",
+        "review_content_length": 18,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 9
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "164405681",
+    "fields": {
+        "review_content": "Does the specific _Code matter in these tests? Can we use _Code instead?",
+        "review_content_length": 14,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "164407908",
+    "fields": {
+        "review_content": "If this specific range is not important to the test, you can use _Code. You could also just use a string or some other object that already responds to _Code.",
+        "review_content_length": 31,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 2
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "179215627",
+    "fields": {
+        "review_content": "This should be private as it's only used by _Code and _Code.",
+        "review_content_length": 13,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 3
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "179581977",
+    "fields": {
+        "review_content": "why is super called here?",
+        "review_content_length": 6,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "185653864",
+    "fields": {
+        "review_content": "I think this might be prone to obscure bug inside application _Quote Should we instead reset the _Code ivar when the transaction is rolled back?",
+        "review_content_length": 26,
+        "is_inline_review": true,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 1
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "298182794",
+    "fields": {
+        "review_content": "This seems like a duplication of the _Code and _Code tasks in webpacker. Is the issue that _Code isn't failing the right way when webpacker is checking dependencies?",
+        "review_content_length": 29,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 3
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "301925079",
+    "fields": {
+        "review_content": "_Author Is this something affecting other database adapters? If so, can we generalize the configuration option?",
+        "review_content_length": 17,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 4
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "316107528",
+    "fields": {
+        "review_content": "I'd also like to see this specifically mentioned in the documentation for the option of _Code, since we should have more information there than the guides",
+        "review_content_length": 27,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "319194652",
+    "fields": {
+        "review_content": "I'm helping _Author fix a bug and contribute to Rails. We need this interface to fix _Issue properly and we are blocked by this PR being standing out for a long time. Could anyone have a quick look at this PR? _Issue is a real bug that completely kills the _Code middleware and is making debugging a lot harder.",
+        "review_content_length": 60,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 10
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "319210136",
+    "fields": {
+        "review_content": "There are at least five places in the Rails source code where this check is neccesary, one of which is actual logic: I'm not sure if it's a good idea to add rescue blocks to all these files. In addition to that, we do need to use that method in our rack middleware (inside _Link that often involves parameter checks). Right now we just _Code. We use _Code whenever possible because _Code lacks a lot of useful methods, and being able to use _Code would make it easier to properly block brute force attacks rather than allowing them to trigger a lot of exceptions.",
+        "review_content_length": 105,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 9
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "324729055",
+    "fields": {
+        "review_content": "I'm probably just thick, but I don't understand the usecase here. When are you going to be calling #singularize(2)? Why is that better than calling #pluralize? If it's because you don't know the count up front, then I think calling it explicitly with _Code or whatever is clearer.",
+        "review_content_length": 49,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "337963579",
+    "fields": {
+        "review_content": "Maybe these options should be verified in _Link, since that's where they're used (and _Link)? I think this needs to be a deprecation warning rather than an error, at least initially.",
+        "review_content_length": 32,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 11
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "353357785",
+    "fields": {
+        "review_content": "I mean adding a new test to the test suite. This change appears to build on _Issue; check out the test added there for an example.",
+        "review_content_length": 27,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 2
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "357360640",
+    "fields": {
+        "review_content": "hm, you are right. So if we want to change the current behavior, need a CHANGELOG entry since it is a breaking change.",
+        "review_content_length": 24,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "361707177",
+    "fields": {
+        "review_content": "Wouldn\u2019t it also make sense to handle _Code along with _Code here?  _File",
+        "review_content_length": 16,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 9
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "364464097",
+    "fields": {
+        "review_content": "Cool ok that makes sense to me. One more question - it wasn't clear to me where I as a user of Rails would set the _Code so that the rake tasks know which connection to use. Do you have an example of how you'd use this in your app?",
+        "review_content_length": 51,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "367729715",
+    "fields": {
+        "review_content": "_Author to take your example: _Highlight_L",
+        "review_content_length": 7,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 8
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "369112649",
+    "fields": {
+        "review_content": "This is awesome. We have an implementation of this at Shopify. This is the implementation. Maybe we should also support passing an relation? Also can you add documentation?",
+        "review_content_length": 29,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "369610541",
+    "fields": {
+        "review_content": "We are using similar technique in our project.\nWe found a major problems with this implementation: Preloader currently determines if the association is preloaded or not by the first record _Link\nWe have encountered that practically: it results in the double load on the loaded target records. I think we need to fix that part first before exposing the power of Preloader to the audience. You may see the implementation that is efficient for us: _Highlight_L Here is how it is used: _Highlight_L You may see that we filter out loaded records with loaded association from collection which resolves the original problem I described. The counter problem of that is that it doesn't allow to pass the nested associations... only an array of associations.",
+        "review_content_length": 123,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 6
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "378265627",
+    "fields": {
+        "review_content": "_Author leaving aside the issue of optional params in the middle you also need to look at positional args in your test as well. As for the approach, I don't think iterating twice is going to be acceptable due to the performance hit. If we're going to change this we need to fix your issue as well so here's an expanded test case: _Highlight_L All of these expectations need to pass.",
+        "review_content_length": 72,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 3
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "378525258",
+    "fields": {
+        "review_content": "Nice implementation, it is easy and clean to use.\nCould you add some documentation for the new block parameter in _Code, specifying what is the parameter passed to the block?",
+        "review_content_length": 30,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 5
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "380176995",
+    "fields": {
+        "review_content": "_Code is private API, can you reproduce this problem using public API?",
+        "review_content_length": 13,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 2
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "380231733",
+    "fields": {
+        "review_content": "Here's a repro that uses the public preloader API to trigger the problem: _Highlight_L",
+        "review_content_length": 15,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 6
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "387340640",
+    "fields": {
+        "review_content": "There's at least two more examples of the same pattern:  _File _File  This seems like a good candidate for a Rubocop rule!",
+        "review_content_length": 25,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 1
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "387460507",
+    "fields": {
+        "review_content": "Here's the relevant documentation on scope return values:  _File",
+        "review_content_length": 12,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 8
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "387598460",
+    "fields": {
+        "review_content": "Try _Link. You can add this to the _Code: _Highlight_S and then let _Code fix any remaining violations.",
+        "review_content_length": 19,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 2
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "387603542",
+    "fields": {
+        "review_content": "Hmm... I'm not sure about this. I know they're the same, and I trust a future reader to know they're the same. But it feels like the author has stopped in the middle of. It's totally unnecessary for the intended meaning, but omitting that last part still feels like bad writing. (In a value context, where the fact it evaluates to nil is directly relevant / significant to whatever's using the value, and not just a throw-away \"well we can't do anything better\".)",
+        "review_content_length": 84,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 9
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "86629147",
+    "fields": {
+        "review_content": "I think this is a good change, as I almost never need the backtrace when working on an app with a routing error. I requested a couple changes but otherwise I think this looks good.",
+        "review_content_length": 36,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 11
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "89617083",
+    "fields": {
+        "review_content": "_Code appears to be doing something really implicit. I'd like to see it be made much more explicit, but this seems fine to me overall. The additional test cases make sense. I would like to see the intent of _Code made more clear before this is merged though",
+        "review_content_length": 49,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 3
+    }
+},
+{
+    "model": "crml_api.review",
+    "pk": "92170874",
+    "fields": {
+        "review_content": "Thanks for the PR! This may be making the method more flexible than it needs to be, but  I suppose if an object is hash-like or string-like enough to respond to _Code or _Code you might expect it to work here. Could you also squash this into one commit? Don't worry about the Travis failures on Ruby 2.5.0 _Code and _Code. There is a Travis bug that has caused them to fail for a while. Should be fixed now",
+        "review_content_length": 81,
+        "is_inline_review": false,
+        "extracted": false,
+        "reviewed": true,
+        "tag": 2
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 2,
+    "fields": {
+        "reviewId": "387598460",
+        "code_content": ".rubocop.yml"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 3,
+    "fields": {
+        "reviewId": "387598460",
+        "code_content": "rubocop -a"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 4,
+    "fields": {
+        "reviewId": "185653864",
+        "code_content": "@new_record"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 5,
+    "fields": {
+        "reviewId": "378525258",
+        "code_content": "driven_by"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 6,
+    "fields": {
+        "reviewId": "179215627",
+        "code_content": "headless_chrome_browser_options"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 7,
+    "fields": {
+        "reviewId": "179215627",
+        "code_content": "headless_firefox_browser_options"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 8,
+    "fields": {
+        "reviewId": "380176995",
+        "code_content": "ActiveRecord::Associations::Preloader"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 9,
+    "fields": {
+        "reviewId": "369112649",
+        "code_content": "class AssociationPreloader\n  def initialize(records)\n    @records = records\n  end\n\n  def preload(*associations)\n    if @records.is_a?(ActiveRecord::Relation)\n      @records.preload(associations)\n    else\n      ActiveRecord::Associations::Preloader.new.preload(@records, associations.flatten) unless @records.empty?\n      @records\n    end\n  end\nend"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 10,
+    "fields": {
+        "reviewId": "92170874",
+        "code_content": "to_hash"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 11,
+    "fields": {
+        "reviewId": "92170874",
+        "code_content": "to_str"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 12,
+    "fields": {
+        "reviewId": "92170874",
+        "code_content": "av:ujs"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 13,
+    "fields": {
+        "reviewId": "92170874",
+        "code_content": "railties"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 14,
+    "fields": {
+        "reviewId": "164405126",
+        "code_content": "true =="
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 15,
+    "fields": {
+        "reviewId": "164405126",
+        "code_content": "if/elsif"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 16,
+    "fields": {
+        "reviewId": "164405681",
+        "code_content": "post_id"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 17,
+    "fields": {
+        "reviewId": "164405681",
+        "code_content": "Post.preload(...).first"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 18,
+    "fields": {
+        "reviewId": "164407908",
+        "code_content": "Object.new"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 19,
+    "fields": {
+        "reviewId": "164407908",
+        "code_content": "to_sym"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 20,
+    "fields": {
+        "reviewId": "364464097",
+        "code_content": "connection_class"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 21,
+    "fields": {
+        "reviewId": "157031593",
+        "code_content": "+"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 22,
+    "fields": {
+        "reviewId": "157031593",
+        "code_content": "env: \"GEM=aj:integration\""
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 23,
+    "fields": {
+        "reviewId": "361707177",
+        "code_content": "'p'"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 24,
+    "fields": {
+        "reviewId": "361707177",
+        "code_content": "'r'"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 25,
+    "fields": {
+        "reviewId": "337963579",
+        "code_content": "ActiveSupport::Callbacks.set_callback"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 26,
+    "fields": {
+        "reviewId": "324729055",
+        "code_content": "string.send(count.many? ? :pluralize : :singularize)"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 27,
+    "fields": {
+        "reviewId": "89617083",
+        "code_content": "build_query_attribute"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 28,
+    "fields": {
+        "reviewId": "89617083",
+        "code_content": "build_query_attribute"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 29,
+    "fields": {
+        "reviewId": "319194652",
+        "code_content": "DebugExceptions"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 30,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "actionpack/lib/action_dispatch/http/mime_negotiation.rb:65"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 31,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "actionpack/lib/action_dispatch/middleware/templates/rescues/diagnostics.text.erb:4"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 32,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "actionpack/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb:4"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 33,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "actionpack/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb:9"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 34,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "actionpack/lib/action_dispatch/middleware/templates/rescues/_request_and_response.text.erb:2"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 35,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "rescue ActionDispatch::ParamsParser::ParseError"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 36,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "ActionDispatch::Request"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 37,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "Rack::Request"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 38,
+    "fields": {
+        "reviewId": "319210136",
+        "code_content": "#params_readable"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 39,
+    "fields": {
+        "reviewId": "316107528",
+        "code_content": "ActiveSupport::Callbacks"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 40,
+    "fields": {
+        "reviewId": "123054180",
+        "code_content": "structure_load_flags"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 41,
+    "fields": {
+        "reviewId": "123054180",
+        "code_content": "nil"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 42,
+    "fields": {
+        "reviewId": "123054180",
+        "code_content": "ON_ERROR_STOP_1"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 43,
+    "fields": {
+        "reviewId": "123054180",
+        "code_content": "nil"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 44,
+    "fields": {
+        "reviewId": "123054180",
+        "code_content": "nil"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 45,
+    "fields": {
+        "reviewId": "298182794",
+        "code_content": "check_node"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 46,
+    "fields": {
+        "reviewId": "298182794",
+        "code_content": "check_yarn"
+    }
+},
+{
+    "model": "crml_api.code",
+    "pk": 47,
+    "fields": {
+        "reviewId": "298182794",
+        "code_content": "rails new"
+    }
+},
+{
+    "model": "crml_api.people",
+    "pk": 9,
+    "fields": {
+        "reviewId": "378265627",
+        "people_content": "@timsly"
+    }
+},
+{
+    "model": "crml_api.people",
+    "pk": 10,
+    "fields": {
+        "reviewId": "367729715",
+        "people_content": "@bogdan"
+    }
+},
+{
+    "model": "crml_api.people",
+    "pk": 11,
+    "fields": {
+        "reviewId": "319194652",
+        "people_content": "@xtina-starr"
+    }
+},
+{
+    "model": "crml_api.people",
+    "pk": 12,
+    "fields": {
+        "reviewId": "301925079",
+        "people_content": "@djcp"
+    }
+},
+{
+    "model": "crml_api.people",
+    "pk": 13,
+    "fields": {
+        "reviewId": "123054180",
+        "people_content": "@matthewd"
+    }
+},
+{
+    "model": "crml_api.issue",
+    "pk": 1,
+    "fields": {
+        "reviewId": "353357785",
+        "issue_content": "#24713"
+    }
+},
+{
+    "model": "crml_api.issue",
+    "pk": 2,
+    "fields": {
+        "reviewId": "319194652",
+        "issue_content": "#29947"
+    }
+},
+{
+    "model": "crml_api.issue",
+    "pk": 3,
+    "fields": {
+        "reviewId": "319194652",
+        "issue_content": "#29947"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 1,
+    "fields": {
+        "reviewId": "387598460",
+        "link_content": "https://github.com/bbatsov/rubocop/blob/master/manual/cops_style.md#styleemptyelse"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 2,
+    "fields": {
+        "reviewId": "369610541",
+        "link_content": "https://github.com/rails/rails/blob/master/activerecord/lib/active_record/associations/preloader.rb#L180"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 3,
+    "fields": {
+        "reviewId": "337963579",
+        "link_content": "https://github.com/rails/rails/blob/v5.1.4/activesupport/lib/active_support/callbacks.rb#L662"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 4,
+    "fields": {
+        "reviewId": "337963579",
+        "link_content": "https://github.com/rails/rails/blob/v5.1.4/activesupport/lib/active_support/callbacks.rb#L654-L661"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 5,
+    "fields": {
+        "reviewId": "319210136",
+        "link_content": "https://github.com/rails/rails/blob/dfcc766/actionpack/lib/action_dispatch/http/mime_negotiation.rb#L63-L67"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 6,
+    "fields": {
+        "reviewId": "319210136",
+        "link_content": "https://github.com/rails/rails/blob/59dbf68/actionpack/lib/action_dispatch/middleware/templates/rescues/diagnostics.text.erb#L2"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 7,
+    "fields": {
+        "reviewId": "319210136",
+        "link_content": "https://github.com/rails/rails/blob/59dbf68/actionpack/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb#L4"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 8,
+    "fields": {
+        "reviewId": "319210136",
+        "link_content": "https://github.com/rails/rails/blob/083f657/actionpack/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb#L9"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 9,
+    "fields": {
+        "reviewId": "319210136",
+        "link_content": "https://github.com/rails/rails/blob/a725a45/actionpack/lib/action_dispatch/middleware/templates/rescues/_request_and_response.text.erb#L2"
+    }
+},
+{
+    "model": "crml_api.link",
+    "pk": 10,
+    "fields": {
+        "reviewId": "319210136",
+        "link_content": "https://github.com/kickstarter/rack-attack/blob/8936cc647ac2d310b3cb49fc50fac87486795aff/examples/rack_attack.rb#L15"
+    }
+}
+]

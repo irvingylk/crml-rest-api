@@ -1,0 +1,104 @@
+<html>
+<head>
+    <title>Models Status</title>
+</head>
+<center>
+<body>
+    <h1>
+        Models Evaluations
+    </h1>
+    <table border="1" cellspacing="5">
+    </tr>
+    <tr>
+         <td>
+            <label>Evaluation Status:</label>
+        </td>
+         <td align="right">
+            <label>{{result.msg}}</label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Number of Features</label>
+        </td>
+        <td align="right">
+            <label>{{result.numFeatures}}</label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Number of Reviews</label>
+        </td>
+        <td align="right">
+            <label>{{result.numReviews}}</label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>SVM Accuracy</label>
+        </td>
+        <td align="right">
+            <label>{{result.svmAcc}}</label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>SVM F1-Score</label>
+        </td>
+        <td align="right">
+            <label>{{result.svmF1sMean}}</label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Random Forest Accuracy</label>
+        </td>
+        <td align="right">
+            <label>{{result.rfAcc}}</label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Random Forest F1-Score</label>
+        </td>
+        <td align="right">
+            <label>{{result.rfF1sMean}}</label>
+        </td>
+    </tr>
+    </table>
+    <br>
+    <table border="1" cellspacing="5">
+    </tr>
+    <tr>
+        <td align="center">
+    
+        </td>
+        {%for t in tags%}
+        <td align="center">
+            <label>{{t}}</label>
+        </td>
+        {%endfor%}
+    </tr>
+    <tr>
+        <td align="center">
+            <label>SVM - F1 Score</label>
+        </td>
+        {%for f1 in result.svmF1s%}
+        <td align="center">
+            <label>{{f1}}</label>
+        </td>
+        {%endfor%}
+    </tr>
+    <tr>
+        <td align="center">
+            <label>Random Forest - F1 Score</label>
+        </td>
+        {%for f1 in result.rfF1s%}
+        <td align="center">
+            <label>{{f1}}</label>
+        </td>
+        {%endfor%}
+    </tr>
+    </table>
+</body>
+</html>

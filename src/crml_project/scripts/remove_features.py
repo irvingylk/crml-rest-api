@@ -2,6 +2,10 @@ from crml_api.models import *
 
 def run(*args):
 
+    removeFeature()
+
+def removeFeature():
+
     reviews = Review.objects.filter(extracted=True)
 
     for r in reviews:
