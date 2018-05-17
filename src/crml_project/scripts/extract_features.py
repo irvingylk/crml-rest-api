@@ -10,27 +10,55 @@ def run(*args):
 def extractFeatures():
 
     reviews = Review.objects.filter(reviewed=True, extracted=False)
-    vectorizer = CountVectorizer(strip_accents='ascii', stop_words=ENGLISH_STOP_WORDS)
+    #vectorizer = CountVectorizer(strip_accents='ascii', stop_words=ENGLISH_STOP_WORDS)
 
     for r in reviews:
 
-        try:
-            a = vectorizer.fit_transform([r.review_content]).toarray()
-        except:
-            continue
-        
+        featuresTf = extractFeaturesFromCorpus(r.review_content)
 
-        if len(a) == 0:
+        if featuresTf == None:
             continue
 
-        tf_list = a[0]
-        features = vectorizer.get_feature_names()
         r.extracted = True
         r.save()
 
-        for i in range(len(features)):
+        for key in featuresTf:
 
             try:
-                Training.objects.create(reviewId=r, feature=features[i], value=Decimal(tf_list[i].item()))
+                Training.objects.create(reviewId=r, feature=key, value=Decimal(featuresTf[key].item()))
             except:
                 print(r.review_content+" Save Failed")
+
+
+def extractFeaturesFromCorpus(corpus) -> {}:
+
+    vectorizer = CountVectorizer(strip_accents='ascii', stop_words=ENGLISH_STOP_WORDS)
+
+    try:
+        corpusVectorized = vectorizer.fit_transform([corpus]).toarray()
+        corpusVectorized = corpusVectorized[0]
+    except:
+        return None
+        
+    featuresName = vectorizer.get_feature_names()
+
+    dic = {}
+
+    for i in range(len(featuresName)):
+
+        dic[featuresName[i]] = corpusVectorized[i]
+
+    return dic
+
+def featuresVectorToGlobal(featuresVector: {}, featuresNameGlobalIndex: {}) -> []:
+
+    n = [0]*len(featuresNameGlobalIndex)
+
+    for key in featuresVector:
+
+        if key in featuresNameGlobalIndex:
+
+            index = featuresNameGlobalIndex[key]
+            n[index] = featuresVector[key]
+
+    return n
