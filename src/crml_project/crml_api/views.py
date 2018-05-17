@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import api_view
 from django.http import HttpResponse
 import time
 
@@ -9,7 +10,8 @@ import time
 from . import serializers
 from . import models
 
-from scripts import extract_features, evaluate_models
+from scripts import extract_features, evaluate_models, rfmodel
+
 
 # Create your views here.
 
@@ -102,3 +104,29 @@ def MLModels(request):
     tags = list(models.Tag.objects.values_list('description', flat=True))
     
     return render(request, 'models.html', {'result' :result, 'tags':tags})
+
+
+@api_view(['POST'])
+def Predict(request):
+
+
+    model = rfmodel.classifier()
+
+    if model:
+
+        classifier = model['classifier']
+        featuresGlobalIndex = model['featuresIndex']
+        featuresVector = extract_features.extractFeaturesFromCorpus('i am use and _reviewer')
+
+        x = extract_features.featuresVectorToGlobal(featuresVector, featuresGlobalIndex)
+
+        y = classifier.predict([x])
+        tagPredicted = y[0]
+        
+        return Response({'res':1,'Tag':tagPredicted}, status=status.HTTP_200_OK)
+    
+    return Response({'res':0}, status=status.HTTP_400_BAD_REQUEST)
+
+    
+
+    
