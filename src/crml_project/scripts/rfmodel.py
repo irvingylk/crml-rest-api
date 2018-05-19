@@ -38,7 +38,3 @@ def classifier():
 
     return dic
 
-def predict():
-
-    return None
-

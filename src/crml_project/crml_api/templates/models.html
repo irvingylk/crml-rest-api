@@ -74,9 +74,11 @@
     
         </td>
         {%for t in tags%}
-        <td align="center">
-            <label>{{t}}</label>
-        </td>
+            {%if t != 'Unknown'%}
+                <td align="center">
+                    <label>{{t}}</label>
+                </td>
+            {%endif%}
         {%endfor%}
     </tr>
     <tr>

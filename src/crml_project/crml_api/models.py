@@ -20,6 +20,7 @@ class Review(models.Model):
     is_inline_review = models.BooleanField(default=False)
     extracted = models.BooleanField(default=False)
     reviewed = models.BooleanField(default=False)
+    project = models.CharField(max_length=100, default='')
     tag = models.ForeignKey(Tag)
 
     def __str__(self):

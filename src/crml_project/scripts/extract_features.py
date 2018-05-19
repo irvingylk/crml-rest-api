@@ -10,7 +10,6 @@ def run(*args):
 def extractFeatures():
 
     reviews = Review.objects.filter(reviewed=True, extracted=False)
-    #vectorizer = CountVectorizer(strip_accents='ascii', stop_words=ENGLISH_STOP_WORDS)
 
     for r in reviews:
 
@@ -19,15 +18,18 @@ def extractFeatures():
         if featuresTf == None:
             continue
 
-        r.extracted = True
-        r.save()
+        
 
         for key in featuresTf:
 
             try:
                 Training.objects.create(reviewId=r, feature=key, value=Decimal(featuresTf[key].item()))
             except:
-                print(r.review_content+" Save Failed")
+                continue
+
+
+        r.extracted = True
+        r.save()
 
 
 def extractFeaturesFromCorpus(corpus) -> {}:

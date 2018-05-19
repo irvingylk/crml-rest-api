@@ -5,7 +5,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Review
-        fields = ('reviewId', 'review_content', 'review_content_length','is_inline_review','extracted','reviewed','tag')
+        fields = ('reviewId', 'review_content', 'review_content_length','is_inline_review','extracted','reviewed','tag', 'project')
 
         
 
