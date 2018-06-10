@@ -4,7 +4,7 @@ from crml_api.models import *
 def run(*args):
 
 
-    tags = ['Check', 'Solution Approach', 'Organization', 'Support By Language', 'Textual', 'Larger Defects', 'Support', 'Resource', 'Logic', 'Interface', 'Traceability', 'Process']
+    tags = ['Solution Approach', 'Organization', 'Visual Representation', 'Supported by Language', 'Textual', 'Larger Defects', 'Support', 'Check', 'Resource', 'Logic', 'Interface', 'Traceability', 'Process', 'Others']
 
     for i in range(len(tags)):
 

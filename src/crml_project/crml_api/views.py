@@ -10,7 +10,9 @@ import time
 from . import serializers
 from . import models
 
-from scripts import extract_features, evaluate_models, rfmodel
+from scripts import extract_features, evaluate_models, svm_model
+
+from .tasks import taskprinting
 
 
 # Create your views here.
@@ -56,6 +58,7 @@ class ReviewApiView(APIView):
         
         if serializer.is_valid():
             serializer.save()
+
             return Response({'res':1, 'tag': review.tag.tagId},status=status.HTTP_200_OK)
 
         return Response({'res':0}, status=status.HTTP_400_BAD_REQUEST)
@@ -98,6 +101,13 @@ def ReviewsStatAnalysis(request):
     return None
 
 
+@api_view(['GET'])
+def ModelsEvolution(request):
+
+    evolutions = evaluate_models.ModelsEvolutions()
+
+    return Response(evolutions, status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 def Predict(request):
 
@@ -116,7 +126,7 @@ def makePrediction(reviewId):
         
         review = None
 
-    model = rfmodel.classifier()
+    model = svm_model.getClassifier()
     
     if model and review:
         

@@ -5,7 +5,9 @@ from sklearn.model_selection import cross_val_score, cross_val_predict
 from sklearn.metrics import f1_score
 import numpy as np
 from random import shuffle
+from scripts import extract_features
 
+CONST_FOLDS = 2
 
 def run(*args):
     evaluateModels()
@@ -23,8 +25,6 @@ def evaluateModels():
     evalResult['rfF1s'] = []
     evalResult['svmF1sMean'] = 0
     evalResult['rfF1sMean'] = 0
-
-    CONST_FOLDS = 5
 
     features = Training.objects.values('feature').distinct()
     reviews = Review.objects.filter(extracted=True)
@@ -84,8 +84,8 @@ def evaluateModels():
 
     xSplit = np.array_split(x, CONST_FOLDS)
     ySplit = np.array_split(y, CONST_FOLDS)
-    f1RFAverage = np.zeros(12)
-    f1SVMAverage = np.zeros(12)
+    f1RFAverage = np.zeros(14)
+    f1SVMAverage = np.zeros(14)
 
     for i in range(CONST_FOLDS):
 
@@ -102,12 +102,12 @@ def evaluateModels():
         
         rfModel.fit(xTrain, yTrain)
         yPred = rfModel.predict(xTest)
-        f1Tags = f1_score(yTest, yPred, labels=[1,2,3,4,5,6,7,8,9,10,11,12], average=None)
+        f1Tags = f1_score(yTest, yPred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14], average=None)
         f1RFAverage += f1Tags
 
         svmModel.fit(xTrain, yTrain)
         yPred = svmModel.predict(xTest)
-        f1Tags = f1_score(yTest, yPred, labels=[1,2,3,4,5,6,7,8,9,10,11,12], average=None)
+        f1Tags = f1_score(yTest, yPred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14], average=None)
         f1SVMAverage += f1Tags
         
 
@@ -130,6 +130,59 @@ def evaluateModels():
 
 
     return evalResult
+
+def ModelsEvolutions() -> {}:
+
+    extract_features.extractFeatures()
+
+    trainings = Training.objects.all()
+    reviews = Review.objects.filter(extracted=True).order_by('reviewed_time')
+    evolutions = []
+
+    for i in range(len(reviews)):
+
+        reviews_partial = reviews[:i+1]
+        trainings_partial = None
+
+        for i2 in range(len(reviews_partial)):
+
+            if trainings_partial == None:
+                trainings_partial = trainings.filter(reviewId=reviews_partial[i2])
+            else:
+                trainings_partial = trainings.filter(reviewId=reviews_partial[i2]) | trainings_partial
+
+        features_partial = trainings_partial.values('feature').distinct()
+
+        dic = {}
+
+        for i2 in range(len(features_partial)):
+            dic[features_partial[i2]['feature']] = i2
+
+        x, y= [], []
+    
+        for r in reviews_partial:
+            trainings_r = trainings_partial.filter(reviewId=r)
+            n = [0] * len(features_partial)
+        
+            for t in trainings_r:
+                index = dic[t.feature]
+                n[index] = float(t.value)
+            
+            x.append(n)
+            y.append(r.tag.tagId)
+
+        svmModel = svm.SVC(decision_function_shape='ovo')
+
+        try:
+            svmScores = cross_val_score(svmModel, x, y, cv=CONST_FOLDS, scoring='accuracy')
+            svm_acc_mean = round(svmScores.mean(), 3)
+            evolutions.append({'key' : i+1, 'svm' : svm_acc_mean})
+        except:
+            evolutions.append({'key' : i+1, 'svm' : 0})
+
+
+
+    return evolutions
 
 
 

@@ -20,8 +20,11 @@ class Review(models.Model):
     is_inline_review = models.BooleanField(default=False)
     extracted = models.BooleanField(default=False)
     reviewed = models.BooleanField(default=False)
+    reviewed_time = models.DateTimeField(null=True, default=None)
     project = models.CharField(max_length=100, default='')
-    tag = models.ForeignKey(Tag)
+    tag = models.ForeignKey(Tag, related_name='reviews_true')
+    predicted = models.ForeignKey(Tag, related_name='reviews_predicted', default=-1)
+    training_size = models.IntegerField(default=0)
 
     def __str__(self):
 

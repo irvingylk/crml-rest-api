@@ -8,3 +8,5 @@ numpy==1.14.3
 scipy==1.0.1
 scikit-learn==0.19.1
 nltk==3.2.5
+pymemcache==1.4.4
+celery==3.1.24
