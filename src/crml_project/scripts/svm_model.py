@@ -1,61 +1,109 @@
-from crml_api.models import *
-from scripts import extract_features
-from sklearn.ensemble import RandomForestClassifier
+from crml_api.models import Review
 from sklearn import svm
 from pymemcache.client import base
+from . import extract_features
 import pickle
 
 
-def getClassifier():
+SVM_Model_KEY = 'SVM_MODEL'
+SVM_CLASSIFIER_POSITION = 0
+SVM_GLOBAL_FEATURES_INDEX_POSITION = 1
+TRAININGS_SIZE_POSITION = 2
 
-    dic = {}
+
+def GetClassifier():
 
     try:
         client = base.Client(('localhost', 11211))
-        classifier_in_bytes = client.get('svm_classifier')
-        featuresIndex_in_bytes = client.get('featuresIndex')
+        model_in_bytes = client.get(SVM_Model_KEY)
+        model = pickle.loads(model_in_bytes)
     except:
-        classifier_in_bytes = None
-        featuresIndex_in_bytes = None
+        model = None
 
-    if classifier_in_bytes and featuresIndex_in_bytes:
-        print('load cached classifier....')
-        classifier = pickle.loads(classifier_in_bytes)
-        featuresDic = pickle.loads(featuresIndex_in_bytes)
+    if model is None:
+        model = CacheClassifier()
 
-    else:
-        extract_features.extractFeatures()
-        features = Training.objects.values('feature').distinct()
-        reviews = Review.objects.filter(extracted=True)
+    return model
 
-        featuresDic = {}
-        for i in range(len(features)):
-            featuresDic[features[i]['feature']] = i
 
-        x, y = [], []
+def CacheClassifier():
 
-        for r in reviews:
-            rsfs = Training.objects.filter(reviewId=r)
-            n = [0] * len(features)
-        
-            for rf in rsfs:
-                index = featuresDic[rf.feature]
-                n[index] = float(rf.value)
-        
-            x.append(n)
-            y.append(r.tag.tagId)
+    reviews = Review.objects.filter(extracted=True)
+    trainings_size = reviews.count()
 
-        if len(y) == 0:
+    global_features_index = extract_features.GetGlobalFeaturesIndex()
+
+    x, y = [], []
+
+    for r in reviews:
+
+        features_vector = extract_features.GetFeaturesVector(r)
+        global_features_vector = extract_features.FeaturesVectorToGlobal(
+            features_vector, global_features_index)
+
+        x.append(global_features_vector)
+        y.append(r.tag.tagId)
+
+    classifier = svm.SVC(decision_function_shape='ovo')
+
+    try:
+        classifier.fit(x, y)
+        client = base.Client(('localhost', 11211))
+        model = (classifier, global_features_index, trainings_size)
+        client.set(SVM_Model_KEY, pickle.dumps(model))
+    except:
+
+        return None
+
+    return model
+
+
+def MakePrediction(review):
+
+    model = GetClassifier()
+
+    if model:
+
+        classifier = model[SVM_CLASSIFIER_POSITION]
+        global_features_index = model[SVM_GLOBAL_FEATURES_INDEX_POSITION]
+        trainings_size = model[TRAININGS_SIZE_POSITION]
+
+        if trainings_size == review.trainings_size:
+
+            if review.predicted:
+                return (review.predicted.tagId, None)
             return None
 
-        classifier = svm.SVC(decision_function_shape='ovo')
+        features_vector = extract_features.GetFeaturesVector(review)
+
+        x = extract_features.FeaturesVectorToGlobal(
+            features_vector, global_features_index)
+        y = classifier.predict([x])
+
+        return (y[0], trainings_size)
+
+    return None
+
+
+def GetClassifierWithSpecificReviews(reviews: [Review]):
+
+    global_features_index = extract_features.GetFeaturesIndex(reviews)
+    x, y = [], []
+
+    for r in reviews:
+
+        features_vector = extract_features.GetFeaturesVector(r)
+        global_features_vector = extract_features.FeaturesVectorToGlobal(
+            features_vector, global_features_index)
+
+        x.append(global_features_vector)
+        y.append(r.tag.tagId)
+
+    classifier = svm.SVC(decision_function_shape='ovo')
+
+    try:
         classifier.fit(x, y)
-        print('cache classifier.....')
-        client.set('svm_classifier', pickle.dumps(classifier))
-        client.set('featuresIndex', pickle.dumps(featuresDic))
+    except:
+        return None
 
-    dic['classifier'] = classifier
-    dic['featuresIndex'] = featuresDic
-
-    return dic
-
+    return (classifier, global_features_index)

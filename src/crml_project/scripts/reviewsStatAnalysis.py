@@ -12,14 +12,13 @@ def run(*args):
             desc = Tag.objects.get(tagId=i).description
         except:
             continue
-        
-        print('%s : %d'%(desc, stat[i]))
+
+        print('%s : %d' % (desc, stat[i]))
 
 
 def statAnalyze(project) -> []:
 
     stat = [0]*13
-
 
     model = rfmodel.classifier()
 
@@ -32,25 +31,23 @@ def statAnalyze(project) -> []:
 
     reviews = Review.objects.filter(project=project)
 
-
     for r in reviews:
 
         if r.reviewed:
             stat[r.tag.tagId] += 1
             continue
-        
+
         content = r.review_content
         featuresVector = extract_features.extractFeaturesFromCorpus(content)
 
         if not featuresVector:
             continue
-        
-        x = extract_features.featuresVectorToGlobal(featuresVector, featuresIndex)
+
+        x = extract_features.featuresVectorToGlobal(
+            featuresVector, featuresIndex)
 
         prediction = classifier.predict([x])[0]
 
         stat[prediction] += 1
 
     return stat
-
-

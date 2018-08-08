@@ -2,14 +2,40 @@ from django.db import models
 
 # Create your models here.
 
+
 class Tag(models.Model):
-    
+
     tagId = models.IntegerField(primary_key=True)
-    description = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
 
     def __str__(self):
 
-        return self.description
+        return self.name
+
+
+class Algorithm(models.Model):
+
+    algorithmId = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+
+        return self.name
+
+
+class Performance(models.Model):
+
+    algorithm = models.ForeignKey(Algorithm)
+    size = models.IntegerField()
+    accuracy = models.DecimalField(max_digits=4, decimal_places=3)
+
+    class Meta:
+
+        unique_together = ('algorithm', 'size')
+
+    def __str__(self):
+
+        return self.size + '_' + self.algorithm.name
 
 
 class Review(models.Model):
@@ -20,11 +46,13 @@ class Review(models.Model):
     is_inline_review = models.BooleanField(default=False)
     extracted = models.BooleanField(default=False)
     reviewed = models.BooleanField(default=False)
+    changed = models.BooleanField(default=False)
     reviewed_time = models.DateTimeField(null=True, default=None)
     project = models.CharField(max_length=100, default='')
     tag = models.ForeignKey(Tag, related_name='reviews_true')
-    predicted = models.ForeignKey(Tag, related_name='reviews_predicted', default=-1)
-    training_size = models.IntegerField(default=0)
+    predicted = models.ForeignKey(
+        Tag, related_name='reviews_predicted', null=True, default=None)
+    trainings_size = models.IntegerField(default=0)
 
     def __str__(self):
 
@@ -55,6 +83,7 @@ class Code(models.Model):
 
         return self.code_content
 
+
 class People(models.Model):
 
     reviewId = models.ForeignKey(Review)
@@ -64,6 +93,7 @@ class People(models.Model):
 
         return self.people_content
 
+
 class Issue(models.Model):
 
     reviewId = models.ForeignKey(Review)
@@ -72,6 +102,7 @@ class Issue(models.Model):
     def __str__(self):
 
         return self.issue_content
+
 
 class link(models.Model):
 
@@ -92,4 +123,3 @@ class Image(models.Model):
     def __str__(self):
 
         return self.image_src
-

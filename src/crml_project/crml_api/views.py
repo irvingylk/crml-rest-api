@@ -3,89 +3,63 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.http import HttpResponse
-import time
 
 
 from . import serializers
 from . import models
+from .tasks import NoticeReviewed, NoticeRemove
 
 from scripts import extract_features, evaluate_models, svm_model
-
-from .tasks import taskprinting
 
 
 # Create your views here.
 
 class ReviewApiView(APIView):
 
-
     def get_object(self, id):
 
         try:
-            
             review = models.Review.objects.get(reviewId=id)
-
-            if review.reviewed:
-                return review
-            else:
-                return None
+            return review
 
         except models.Review.DoesNotExist:
             return None
 
-
     def get(self, request, id, format=None):
-
         review = self.get_object(id)
 
-        if(review == None):
+        if review:
 
-            return Response({'tag':-1})
+            if review.reviewed:
 
-        else:
+                return Response({'type': 'true_value', 'tag': review.tag.tagId})
 
-            return Response({'tag':review.tag.tagId}) 
+            model = svm_model.GetClassifier()
+
+            if model and review.trainings_size < model[svm_model.TRAININGS_SIZE_POSITION]:
+
+                return Response({'tag': -1})
+
+            return Response({'type': 'prediction', 'tag': review.tag.tagId})
+
+        return Response({'tag': -1})
 
     def put(self, request, id, format=None):
 
-        try:
-            review = models.Review.objects.get(reviewId=id)
-        except:
-            return Response({'res':0}, status=status.HTTP_400_BAD_REQUEST)
+        if models.Review.objects.filter(reviewId=id).count() == 0:
+            return Response({'res': 0}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = serializers.ReviewSerializer(review, data=request.data)
-        
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response({'res':1, 'tag': review.tag.tagId},status=status.HTTP_200_OK)
-
-        return Response({'res':0}, status=status.HTTP_400_BAD_REQUEST)
-
+        NoticeReviewed.delay(reviewId=id, tagId=request.data.get('tag'))
+        return Response({'res': 1}, status=status.HTTP_200_OK)
 
     def delete(self, request, id, format=None):
 
-        try:
+        if models.Review.objects.filter(reviewId=id).count() == 1:
 
-            review = models.Review.objects.get(reviewId=id)
-            
-            review.tag = models.Tag.objects.get(tagId=-1)
-            review.reviewed = False
+            NoticeRemove.delay(reviewId=id)
+            return Response({'res': 1}, status=status.HTTP_200_OK)
 
-            if review.extracted:
-
-                models.Training.objects.filter(reviewId=review).delete()
-                review.extracted = False
-
-            review.save()
-
-            prediction = makePrediction(id)
-            if prediction != None:
-                return Response({'res':1, 'tag':prediction},status=status.HTTP_200_OK)
-            return Response({'res':0},status=status.HTTP_400_BAD_REQUEST)
-        except:
-            return Response({'res':0},status=status.HTTP_400_BAD_REQUEST)
+        return Response({'res': 0}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def MLModels(request):
@@ -93,8 +67,9 @@ def MLModels(request):
     extract_features.extractFeatures()
     result = evaluate_models.evaluateModels()
     tags = list(models.Tag.objects.values_list('description', flat=True))
-    
-    return render(request, 'models.html', {'result' :result, 'tags':tags})
+
+    return render(request, 'models.html', {'result': result, 'tags': tags})
+
 
 def ReviewsStatAnalysis(request):
 
@@ -108,76 +83,68 @@ def ModelsEvolution(request):
 
     return Response(evolutions, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def Predict(request):
 
     save(request)
 
-    prediction = makePrediction(request.data.get('reviewId'))
-    if prediction != None:
-        return Response({'res':1, 'tag':prediction}, status=status.HTTP_200_OK)
-    return Response({'res':0}, status=status.HTTP_400_BAD_REQUEST)
-
-def makePrediction(reviewId):
-
     try:
-        review = models.Review.objects.get(reviewId=reviewId)
+        review = models.Review.objects.get(
+            reviewId=request.data.get('reviewId'))
     except:
-        
         review = None
 
-    model = svm_model.getClassifier()
-    
-    if model and review:
-        
-        classifier = model['classifier']
-        featuresGlobalIndex = model['featuresIndex']
-        featuresVector = extract_features.extractFeaturesFromCorpus(review.review_content)
-        if not featuresVector:
-            return None
-            
-        x = extract_features.featuresVectorToGlobal(featuresVector, featuresGlobalIndex)
-        y = classifier.predict([x])
-        return y[0]
-    
-    return None
-
-def save(request):
-    
-    try:
-        review = models.Review.objects.get(reviewId=id)
-
-    except models.Review.DoesNotExist:
-        review = None
+    tag = None
 
     if review:
+        tag = svm_model.MakePrediction(review)
+
+    if tag:
+
+        if tag[1]:
+            review.trainings_size = tag[1]
+            review.predicted = models.Tag.objects.get(tagId=tag[0])
+            review.save()
+
+        return Response({'res': 1, 'tag': tag[0]}, status=status.HTTP_200_OK)
+    return Response({'res': 0}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def save(request):
+
+    if models.Review.objects.filter(reviewId=request.data.get('reviewId')).count() == 1:
         return
 
+    request.data['tag'] = -1
+
     reviewSerializer = serializers.ReviewSerializer(data=request.data)
+
     if reviewSerializer.is_valid():
 
         reviewSerializer.save()
 
-        codeSerializer = serializers.CodeSerializer(data=request.data.get('codes'), many=True)
+        codeSerializer = serializers.CodeSerializer(
+            data=request.data.get('codes'), many=True)
         if codeSerializer.is_valid():
-                codeSerializer.save()
+            codeSerializer.save()
 
-        peopleSerializer = serializers.PeopleSerializer(data=request.data.get('people'), many=True)
+        peopleSerializer = serializers.PeopleSerializer(
+            data=request.data.get('people'), many=True)
         if peopleSerializer.is_valid():
-                peopleSerializer.save()
+            peopleSerializer.save()
 
-        issueSerializer = serializers.IssueSerializer(data=request.data.get('issues'), many=True)
+        issueSerializer = serializers.IssueSerializer(
+            data=request.data.get('issues'), many=True)
         if issueSerializer.is_valid():
-                issueSerializer.save()
-            
-        linkSerializer = serializers.LinkSerializer(data=request.data.get('links'), many=True)
-        if linkSerializer.is_valid():
-                linkSerializer.save()
+            issueSerializer.save()
 
-        imageSerializer = serializers.ImageSerializer(data=request.data.get('images'), many=True)
+        linkSerializer = serializers.LinkSerializer(
+            data=request.data.get('links'), many=True)
+        if linkSerializer.is_valid():
+            linkSerializer.save()
+
+        imageSerializer = serializers.ImageSerializer(
+            data=request.data.get('images'), many=True)
         if imageSerializer.is_valid():
             imageSerializer.save()
-
-    
-
-    

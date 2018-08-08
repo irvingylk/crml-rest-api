@@ -1,14 +1,13 @@
 from rest_framework import serializers
 from . import models
 
+
 class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Review
-        fields = ('reviewId', 'review_content', 'review_content_length','is_inline_review','extracted','reviewed','tag', 'project')
-
-        
-
+        fields = ('reviewId', 'review_content', 'review_content_length',
+                  'is_inline_review', 'tag', 'project')
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -17,11 +16,13 @@ class TagSerializer(serializers.ModelSerializer):
         model = models.Tag
         fields = ('tagId', 'description')
 
+
 class TrainingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Training
         fields = ('reviewId', 'feature', 'value')
+
 
 class CodeSerializer(serializers.ModelSerializer):
 
@@ -36,11 +37,13 @@ class PeopleSerializer(serializers.ModelSerializer):
         model = models.People
         fields = ('reviewId', 'people_content')
 
+
 class IssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Issue
         fields = ('reviewId', 'issue_content')
+
 
 class LinkSerializer(serializers.ModelSerializer):
 

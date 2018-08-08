@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +26,8 @@ SECRET_KEY = '!u5#0uf$-m04d92nqf#2bqe0aku3r12h$@w@rdfrfctd)2+&yt'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-18-188-72-240.us-east-2.compute.amazonaws.com', '18.188.72.240','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['ec2-18-188-72-240.us-east-2.compute.amazonaws.com',
+                 '18.188.72.240', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -137,5 +139,16 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
+    }
+}
+
+# Celery Periodic tasks
+
+CELERY_BEAT_SCHEDULE = {
+
+    'refresh-historical-performances': {
+
+        'task': 'crml_api.tasks.RefreshClassifierHistoricalPerformance',
+        'schedule': timedelta(minutes=5)
     }
 }
