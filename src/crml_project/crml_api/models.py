@@ -123,3 +123,38 @@ class Image(models.Model):
     def __str__(self):
 
         return self.image_src
+
+
+class File(models.Model):
+
+    owner = models.CharField(max_length=100)
+    project = models.CharField(max_length=100)
+    file_path = models.FilePathField(path="*", match="*.*", max_length=200)
+    prob = models.DecimalField(max_digits=4, decimal_places=3)
+    reason = models.CharField(max_length=500)
+
+    class Meta:
+
+        unique_together = ('owner', 'project', 'file_path')
+
+    def __str__(self):
+
+        return self.file_path
+
+
+class PullRequest(models.Model):
+
+    owner = models.CharField(max_length=100)
+    project = models.CharField(max_length=100)
+    pull_request = models.CharField(max_length=100)
+    commit = models.CharField(max_length=100)
+    prob = models.DecimalField(max_digits=4, decimal_places=3)
+    reason = models.CharField(max_length=500)
+
+    class Meta:
+
+        unique_together = ('owner', 'project', 'pull_request', 'commit')
+
+    def __str__(self):
+
+        return self.file_path
