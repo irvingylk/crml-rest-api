@@ -129,7 +129,7 @@ class File(models.Model):
 
     owner = models.CharField(max_length=100)
     project = models.CharField(max_length=100)
-    file_path = models.FilePathField(path="*", match="*.*", max_length=200)
+    file_path = models.FilePathField(path="(\/[a-zA-Z0-9]+)*", max_length=200)
     prob = models.DecimalField(max_digits=4, decimal_places=3)
     reason = models.CharField(max_length=500)
 
