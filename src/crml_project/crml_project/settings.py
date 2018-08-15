@@ -80,23 +80,15 @@ WSGI_APPLICATION = 'crml_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-'''
-
-DATABASES = {
-    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'crmldb',
-        'USER': 'irving',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
+        'USER': 'crmlmasteruser',
+        'PASSWORD': 'crmlmasterpass',
+        'HOST': 'crml-proj-db.comevvm1no7n.ap-southeast-2.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
-'''
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
