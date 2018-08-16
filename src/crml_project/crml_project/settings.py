@@ -142,5 +142,10 @@ CELERY_BEAT_SCHEDULE = {
 
         'task': 'crml_api.tasks.RefreshClassifierHistoricalPerformance',
         'schedule': timedelta(minutes=5)
+    },
+    'update-classifier': {
+
+        'task': 'crml_api.tasks.UpdateClassifier',
+        'schedule': timedelta(minutes=5)
     }
 }

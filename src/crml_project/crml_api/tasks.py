@@ -9,7 +9,9 @@ from datetime import datetime
 TRAININGS_INCREMENT = 3
 
 
-class Static_P:
+class Monitor:
+
+    Training_Review_Changed = False
     Periodic_Task_Exe_Count = 0
 
 
@@ -51,7 +53,7 @@ def NoticeReviewed(reviewId: str, tagId: int):
                 except:
                     continue
 
-    svm_model.CacheClassifier()
+    Monitor.Training_Review_Changed = True
     print("Notice Reviewed Executed")
 
 
@@ -76,8 +78,16 @@ def NoticeRemove(reviewId: str):
 
     review.save()
 
-    svm_model.CacheClassifier()
+    Monitor.Training_Review_Changed = True
     print("Notice Remove Executed")
+
+
+@task
+def UpdateClassifier():
+
+    if Monitor.Training_Review_Changed:
+        svm_model.CacheClassifier()
+        Monitor.Training_Review_Changed = False
 
 
 @task
@@ -126,9 +136,9 @@ def RefreshClassifierHistoricalPerformance():
             Performance.objects.create(algorithm=Algorithm.objects.get(
                 algorithmId=1), size=i, accuracy=acc)
 
-    Static_P.Periodic_Task_Exe_Count += 1
+    Monitor.Periodic_Task_Exe_Count += 1
 
-    print("Periodic Task Execute %i" % (Static_P.Periodic_Task_Exe_Count))
+    print("Periodic Task Execute %i" % (Monitor.Periodic_Task_Exe_Count))
 
 
 '''

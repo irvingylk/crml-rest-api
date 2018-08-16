@@ -12,4 +12,3 @@ admin.site.register(models.People)
 admin.site.register(models.Issue)
 admin.site.register(models.link)
 admin.site.register(models.Image)
-
