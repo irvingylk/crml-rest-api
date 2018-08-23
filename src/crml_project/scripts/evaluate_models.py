@@ -148,3 +148,120 @@ def ModelsEvolutions():
         evolutions.append({'key': p.size, 'svm': p.accuracy})
 
     return evolutions
+
+
+def SelectTestSet(min: int) -> list:
+
+    extracted_reviews = Review.objects.filter(extracted=True)
+
+    if(extracted_reviews.count() < min):
+
+        return []
+
+    differ = []
+    temp = None
+
+    for review in extracted_reviews:
+
+        if temp and review.tag != temp:
+
+            differ.append(review.reviewId)
+            reviews = extracted_reviews.exclude(reviewId__in=differ)
+            size = reviews.count()
+            test_size = int(size * 4 / 10)
+
+            ids = [r.reviewId for r in reviews]
+
+            shuffle(ids)
+
+            return ids[:test_size]
+
+        differ.append(review.reviewId)
+        temp = review.tag
+
+    return []
+
+
+def IncrementalTrainingSet(min: int, inc: int, selectedTestSet: list) -> list:
+
+    reviews = list(Review.objects.filter(
+        extracted=True).exclude(reviewId__in=selectedTestSet))
+
+    size = len(reviews)
+
+    if size < min:
+        return None
+
+    shuffle(reviews)
+
+    incrementalSets = [reviews[min:i+1] for i in range(size)]
+    incrementalSets.insert(0, reviews[:min])
+
+    return incrementalSets
+
+# arg = {Review:predicted tag number}
+
+
+def CalculateF1s(predictions: dict) -> dict:
+
+    labels = {
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: [],
+        7: [],
+        8: [],
+        9: [],
+        10: [],
+        11: [],
+        12: [],
+        13: [],
+        14: []
+    }
+
+    for review in predictions:
+
+        trueValue = int(review.tag.tagId)
+        predictedAs = int(predictions[review])
+
+        for label in labels:
+
+            if predictedAs == label == trueValue:
+                labels[label].append(2)
+            elif predictedAs == label != trueValue:
+                labels[label].append(1)
+            elif predictedAs != label == trueValue:
+                labels[label].append(-1)
+            elif predictedAs != label != trueValue:
+                labels[label].append(0)
+            else:
+                print("Bug")
+
+    f1scores = {}
+
+    for label in labels:
+
+        temp = labels[label]
+        truePositive = 0
+        falsePositive = 0
+        falseNegative = 0
+
+        for v in temp:
+
+            if v == 2:
+                truePositive += 1
+            elif v == 1:
+                falsePositive += 1
+            elif v == -1:
+                falseNegative + 1
+
+        precision = truePositive / (truePositive+falsePositive)
+        recall = truePositive / (truePositive+falseNegative)
+
+        f1score = (2*precision*recall)/(precision+recall)
+
+        f1scores[label] = round(f1score, 3)
+
+    return f1scores

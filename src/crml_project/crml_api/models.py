@@ -73,6 +73,126 @@ class Training(models.Model):
 
         return self.feature
 
+# tf + stopwords
+
+
+class Training_m1(models.Model):
+
+    reviewId = models.ForeignKey(Review)
+    feature = models.CharField(max_length=500)
+    value = models.PositiveIntegerField()
+
+    class Meta:
+
+        unique_together = ('reviewId', 'feature')
+
+    def __str__(self):
+
+        return self.feature
+
+
+class Performance_m1(models.Model):
+
+    algorithm = models.ForeignKey(Algorithm)
+    size = models.IntegerField()
+    binary = models.BooleanField(default=False)
+    sa_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    og_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    vr_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    sl_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    tx_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ld_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    sp_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ck_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    rs_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    lg_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    it_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    tr_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    pc_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ot_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+
+    class Meta:
+
+        unique_together = ('algorithm', 'size', 'binary')
+
+    def __str__(self):
+
+        return self.size + '_' + self.algorithm.name
+
+# tf + stopwords + stemming
+
+
+class Training_m2(models.Model):
+
+    reviewId = models.ForeignKey(Review)
+    feature = models.CharField(max_length=500)
+    value = models.PositiveIntegerField()
+
+    class Meta:
+
+        unique_together = ('reviewId', 'feature')
+
+    def __str__(self):
+
+        return self.feature
+
+
+class Performance_m2(models.Model):
+
+    algorithm = models.ForeignKey(Algorithm)
+    size = models.IntegerField()
+    binary = models.BooleanField(default=False)
+    sa_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    og_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    vr_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    sl_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    tx_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ld_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    sp_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ck_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    rs_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    lg_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    it_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    tr_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    pc_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ot_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+
+    class Meta:
+
+        unique_together = ('algorithm', 'size', 'binary')
+
+    def __str__(self):
+
+        return self.size + '_' + self.algorithm.name
+
 
 class Code(models.Model):
 
