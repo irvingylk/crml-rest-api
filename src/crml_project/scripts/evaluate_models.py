@@ -252,3 +252,19 @@ def CalculateF1s(predictions: dict) -> dict:
         f1scores[label] = round(f1score, 3)
 
     return f1scores
+
+
+def GetFalsePositionAndFalseNegative(predictions: dict) -> dict:
+
+    badPredictedReviews = {}
+
+    for review in predictions:
+
+        trueValue = int(review.tag.tagId)
+        predictedAs = int(predictions[review])
+
+        if trueValue != predictedAs:
+
+            badPredictedReviews[review.reviewId] = predictedAs
+
+    return badPredictedReviews
