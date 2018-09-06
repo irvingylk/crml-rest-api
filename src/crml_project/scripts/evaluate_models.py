@@ -150,52 +150,36 @@ def ModelsEvolutions():
     return evolutions
 
 
-def SelectTestSet(min: int) -> list:
-
-    extracted_reviews = Review.objects.filter(extracted=True)
-
-    if(extracted_reviews.count() < min):
-
-        return []
-
-    differ = []
-    temp = None
-
-    for review in extracted_reviews:
-
-        if temp and review.tag != temp:
-
-            differ.append(review.reviewId)
-            reviews = extracted_reviews.exclude(reviewId__in=differ)
-            size = reviews.count()
-            test_size = int(size * 4 / 10)
-
-            ids = [r.reviewId for r in reviews]
-
-            shuffle(ids)
-
-            return ids[:test_size]
-
-        differ.append(review.reviewId)
-        temp = review.tag
-
-    return []
-
-
-def IncrementalTrainingSet(min: int, inc: int, selectedTestSet: list) -> list:
-
-    reviews = list(Review.objects.filter(
-        extracted=True).exclude(reviewId__in=selectedTestSet))
+def SelectTestSet(reviews: [Review], min: int) -> list:
 
     size = len(reviews)
 
-    if size < min:
+    if(size < min):
+
         return None
 
-    shuffle(reviews)
+    for i in range(size-1):
 
-    incrementalSets = [reviews[min:i+1] for i in range(size)]
-    incrementalSets.insert(0, reviews[:min])
+        if reviews[0].tag != reviews[i+1].tag:
+
+            reviews[1], reviews[i+1] = reviews[i+1], reviews[1]
+
+            training_size = int(size * 6 / 10)
+            return reviews[:training_size], reviews[training_size:]
+
+    return None
+
+
+def IncrementalTrainingSet(min: int, inc: int, trainings: list) -> list:
+
+    size = len(trainings)
+
+    if size < min:
+        return None
+    elif size < min + inc:
+        return [trainings]
+
+    incrementalSets = [trainings[:min+i] for i in range(0, (size-min)+1, inc)]
 
     return incrementalSets
 
@@ -257,10 +241,13 @@ def CalculateF1s(predictions: dict) -> dict:
             elif v == -1:
                 falseNegative + 1
 
-        precision = truePositive / (truePositive+falsePositive)
-        recall = truePositive / (truePositive+falseNegative)
+        precision = truePositive / \
+            (truePositive+falsePositive) if truePositive != 0 else 0
+        recall = truePositive / \
+            (truePositive+falseNegative) if truePositive != 0 else 0
 
-        f1score = (2*precision*recall)/(precision+recall)
+        temp2 = precision + recall
+        f1score = (2*precision*recall)/(precision+recall) if temp2 != 0 else 0
 
         f1scores[label] = round(f1score, 3)
 

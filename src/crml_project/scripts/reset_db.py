@@ -16,7 +16,7 @@ def run(*args):
 
     Tag.objects.create(tagId=-1, name='Unknown')
 
-    algorithms = ['Support Vector Machine']
+    algorithms = ['Support Vector Machine', 'Random Forest']
 
     for i in range(len(algorithms)):
 

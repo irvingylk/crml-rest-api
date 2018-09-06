@@ -1,60 +1,8 @@
-from crml_api.models import Review, Training, Training_m1, Training_m2
-from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
-from decimal import Decimal
+from crml_api.models import Review, Training
 
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
-
-
-def run(*args):
-
-    extractFeatures()
-
-
-def extractFeatures():
-
-    reviews = Review.objects.filter(reviewed=True, extracted=False)
-
-    for r in reviews:
-
-        featuresTf = extractFeaturesFromCorpus(r.review_content)
-
-        if featuresTf is None:
-            continue
-
-        for key in featuresTf:
-
-            try:
-                Training.objects.create(
-                    reviewId=r, feature=key, value=Decimal(featuresTf[key].item()))
-            except:
-                continue
-
-        r.extracted = True
-        r.save()
-
-
-def extractFeaturesFromCorpus(corpus) -> {}:
-
-    vectorizer = CountVectorizer(
-        strip_accents='ascii', stop_words=ENGLISH_STOP_WORDS)
-
-    try:
-        corpusVectorized = vectorizer.fit_transform([corpus]).toarray()
-        corpusVectorized = corpusVectorized[0]
-    except:
-        return None
-
-    featuresName = vectorizer.get_feature_names()
-
-    dic = {}
-
-    for i in range(len(featuresName)):
-
-        dic[featuresName[i]] = corpusVectorized[i]
-
-    return dic
 
 
 def FeaturesVectorToGlobal(featuresVector: {}, featuresNameGlobalIndex: {}) -> []:
@@ -179,39 +127,25 @@ def ExtractFeatureFromCorpusM1(corpus: str) -> dict:
     return TermFrequency(RemoveStopWords(Tokenization(corpus)))
 
 
-def GetM1GlobalFeaturesIndex() -> dict:
+def GetM1GlobalFeaturesIndex(reviews: [Review]) -> dict:
 
-    features = Training_m1.objects.values('feature').distinct()
-    featuresDic = {}
+    globalFeaturesDic = {}
+    index = 0
 
-    for i in range(len(features)):
-        featuresDic[features[i]['feature']] = i
+    for review in reviews:
 
-    return featuresDic
+        content = review.review_content
 
+        features = RemoveStopWords(Tokenization(content))
 
-def GetM1PartialFeaturesIndex(reviews: [Review]) -> dict:
+        for feature in features:
 
-    features = Training_m1.objects.filter(
-        reviewId__in=reviews).values('feature').distinct()
+            if feature not in globalFeaturesDic:
 
-    featuresDic = {}
+                globalFeaturesDic[feature] = index
+                index += 1
 
-    for i in range(len(features)):
-        featuresDic[features[i]['feature']] = i
-
-    return featuresDic
-
-
-def GetM1FeaturesTf(review: Review) -> dict:
-
-    trainings_from_review = Training_m1.objects.filter(reviewId=review)
-    featuresTf = {}
-
-    for training in trainings_from_review:
-        featuresTf[training.feature] = float(training.value)
-
-    return featuresTf
+    return globalFeaturesDic
 
 
 # M2 = tokenization + stopwords + stemming
@@ -222,36 +156,22 @@ def ExtractFeatureFromCorpusM2(corpus: str) -> dict:
     return TermFrequency(SnowballStem(RemoveStopWords(Tokenization(corpus))))
 
 
-def GetM2GlobalFeaturesIndex() -> dict:
+def GetM2GlobalFeaturesIndex(reviews: [Review]) -> dict:
 
-    features = Training_m2.objects.values('feature').distinct()
-    featuresDic = {}
+    globalFeaturesDic = {}
+    index = 0
 
-    for i in range(len(features)):
-        featuresDic[features[i]['feature']] = i
+    for review in reviews:
 
-    return featuresDic
+        content = review.review_content
 
+        features = SnowballStem(RemoveStopWords(Tokenization(content)))
 
-def GetM2PartialFeaturesIndex(reviews: [Review]) -> dict:
+        for feature in features:
 
-    features = Training_m2.objects.filter(
-        reviewId__in=reviews).values('feature').distinct()
+            if feature not in globalFeaturesDic:
 
-    featuresDic = {}
+                globalFeaturesDic[feature] = index
+                index += 1
 
-    for i in range(len(features)):
-        featuresDic[features[i]['feature']] = i
-
-    return featuresDic
-
-
-def GetM2FeaturesTf(review: Review) -> dict:
-
-    trainings_from_review = Training_m2.objects.filter(reviewId=review)
-    featuresTf = {}
-
-    for training in trainings_from_review:
-        featuresTf[training.feature] = float(training.value)
-
-    return featuresTf
+    return globalFeaturesDic

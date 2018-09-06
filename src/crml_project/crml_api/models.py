@@ -124,6 +124,8 @@ class Performance_m1(models.Model):
         max_digits=4, decimal_places=3, null=True, default=None)
     ot_f1 = models.DecimalField(
         max_digits=4, decimal_places=3, null=True, default=None)
+    avg_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
 
     class Meta:
 
@@ -183,6 +185,8 @@ class Performance_m2(models.Model):
     pc_f1 = models.DecimalField(
         max_digits=4, decimal_places=3, null=True, default=None)
     ot_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    avg_f1 = models.DecimalField(
         max_digits=4, decimal_places=3, null=True, default=None)
 
     class Meta:
@@ -278,3 +282,49 @@ class PullRequest(models.Model):
     def __str__(self):
 
         return self.file_path
+
+
+class Performance_unbalanced_learn(models.Model):
+
+    algorithm = models.ForeignKey(Algorithm)
+    size = models.IntegerField()
+    binary = models.BooleanField(default=False)
+    technique = models.CharField(max_length=100, default='')
+    sa_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    og_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    vr_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    sl_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    tx_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ld_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    sp_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ck_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    rs_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    lg_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    it_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    tr_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    pc_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    ot_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+    avg_f1 = models.DecimalField(
+        max_digits=4, decimal_places=3, null=True, default=None)
+
+    class Meta:
+
+        unique_together = ('algorithm', 'size', 'binary', 'technique')
+
+    def __str__(self):
+
+        return self.size + '_' + self.algorithm.name

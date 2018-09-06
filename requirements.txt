@@ -4,6 +4,7 @@ celery==4.2.0
 Django==1.11
 django-extensions==2.0.7
 djangorestframework==3.6.2
+imbalanced-learn==0.3.3
 kombu==4.2.1
 mysqlclient==1.3.13
 nltk==3.3

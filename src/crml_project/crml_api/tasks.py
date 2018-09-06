@@ -38,8 +38,7 @@ def NoticeReviewed(reviewId: str, tagId: int):
     review.save()
 
     if not review.extracted:
-        featuresTf = extract_features.extractFeaturesFromCorpus(
-            review.review_content)
+        featuresTf = extract_features.ExtractFeatureFromCorpusM1(review.review_content)
         review.extracted = True
         review.save()
 
@@ -49,7 +48,7 @@ def NoticeReviewed(reviewId: str, tagId: int):
 
                 try:
                     Training.objects.create(
-                        reviewId=review, feature=key, value=Decimal(featuresTf[key].item()))
+                        reviewId=review, feature=key, value=Decimal(featuresTf[key]))
                 except:
                     continue
 
