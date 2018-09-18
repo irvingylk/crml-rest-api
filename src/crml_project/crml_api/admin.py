@@ -5,7 +5,6 @@ from . import models
 admin.site.register(models.Review)
 admin.site.register(models.Tag)
 admin.site.register(models.Training)
-admin.site.register(models.Algorithm)
 admin.site.register(models.Performance)
 admin.site.register(models.Code)
 admin.site.register(models.People)

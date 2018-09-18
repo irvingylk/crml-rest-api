@@ -1,4 +1,4 @@
-from crml_api.models import Tag, Review, Algorithm
+from crml_api.models import Tag, Review
 
 
 def run(*args):

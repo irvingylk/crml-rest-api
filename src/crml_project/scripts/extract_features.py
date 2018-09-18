@@ -1,8 +1,41 @@
 from crml_api.models import Review, Training
-
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
+
+E1 = "tokenization, stop-words, term-frequency"
+E2 = "tokenization, stop-words, binary"
+E3 = "tokenization, stop-words, stemming, term-frequency"
+E4 = "tokenization, stop-words, stemming, binary"
+E5 = "tokenization, stop-words, term-frequency, tfidf"
+E6 = "tokenization, stop-words, binary, tfidf"
+E7 = "tokenization, stop-words, stemming, term-frequency, tfidf"
+E8 = "tokenization, stop-words, stemming, binary, tfidf"
+
+E9 = "tokenization, stop-words, term-frequency, SMOTEENN"
+E10 = "tokenization, stop-words, binary, SMOTEENN"
+E11 = "tokenization, stop-words, stemming, term-frequency, SMOTEENN"
+E12 = "tokenization, stop-words, stemming, binary, SMOTEENN"
+E13 = "tokenization, stop-words, term-frequency, tfidf, SMOTENN"
+E14 = "tokenization, stop-words, binary, tfidf, SMOTENN"
+E15 = "tokenization, stop-words, stemming, term-frequency, tfidf, SMOTENN"
+E16 = "tokenization, stop-words, stemming, binary, tfidf, SMOTENN"
+
+E17 = "tokenization, stop-words, term-frequency, SMOTETOMEK"
+E18 = "tokenization, stop-words, binary, SMOTETOMEK"
+E19 = "tokenization, stop-words, stemming, term-frequency, SMOTETOMEK"
+E20 = "tokenization, stop-words, stemming, binary, SMOTETOMEK"
+E21 = "tokenization, stop-words, term-frequency, tfidf, SMOTETOMEK"
+E22 = "tokenization, stop-words, binary, tfidf, SMOTETOMEK"
+E23 = "tokenization, stop-words, stemming, term-frequency, tfidf, SMOTETOMEK"
+E24 = "tokenization, stop-words, stemming, binary, tfidf, SMOTETOMEK"
+
+USE_STEMMING = [E3, E4, E7, E8, E11, E12, E15, E16, E19, E20, E23, E24]
+USE_BINARY = [E2, E4, E6, E8, E10, E12, E14, E16, E18, E20, E22, E24]
+USE_TF = [E1, E3, E5, E7, E9, E11, E13, E15, E17, E19, E21, E23]
+USE_TFIDF = [E5, E6, E7, E8, E13, E14, E15, E16, E21, E22, E23, E24]
+USE_SMOTEENN = [E9, E10, E11, E12, E13, E14, E15, E16]
+USE_SMOTETOMEK = [E17, E18, E19, E20, E21, E22, E23, E24]
 
 
 def FeaturesVectorToGlobal(featuresVector: {}, featuresNameGlobalIndex: {}) -> []:
@@ -17,17 +50,6 @@ def FeaturesVectorToGlobal(featuresVector: {}, featuresNameGlobalIndex: {}) -> [
             n[index] = featuresVector[key]
 
     return n
-
-
-def GetGlobalFeaturesIndex() -> {}:
-
-    features = Training.objects.values('feature').distinct()
-
-    featuresDic = {}
-    for i in range(len(features)):
-        featuresDic[features[i]['feature']] = i
-
-    return featuresDic
 
 
 def GetFeaturesIndex(reviews: [Review]) -> {}:
@@ -104,74 +126,56 @@ def FeaturesTfToGlobal(featuresVector: dict, featuresNameGlobalIndex: dict) -> l
     return n
 
 
-def GetBinaryFromTf(globalFeatureTf: list) -> list:
+def GetBinaryFromTf(tf: dict) -> list:
 
-    n = []
+    for t in tf:
 
-    for v in globalFeatureTf:
-
-        if v > 0:
-
-            n.append(1)
+        if tf[t] > 0:
+            tf[t] = 1
         else:
+            tf[t] = 0
 
-            n.append(0)
-
-    return n
-
-# M1 = tokenization + stopwords
+    return tf
 
 
-def ExtractFeatureFromCorpusM1(corpus: str) -> dict:
-
-    return TermFrequency(RemoveStopWords(Tokenization(corpus)))
-
-
-def GetM1GlobalFeaturesIndex(reviews: [Review]) -> dict:
+def GetGlobalFeaturesIndex(review: [Review], train_index: [int], extractionMethod: str) -> dict:
 
     globalFeaturesDic = {}
-    index = 0
+    globalFeatures = []
 
-    for review in reviews:
+    if extractionMethod not in USE_STEMMING:
 
-        content = review.review_content
+        for i in train_index:
 
-        features = RemoveStopWords(Tokenization(content))
+            content = review[i].review_content
+            globalFeatures += RemoveStopWords(Tokenization(content))
 
-        for feature in features:
+    elif extractionMethod in USE_STEMMING:
 
-            if feature not in globalFeaturesDic:
+        for i in train_index:
 
-                globalFeaturesDic[feature] = index
-                index += 1
+            content = review[i].review_content
+            globalFeatures += SnowballStem(
+                RemoveStopWords(Tokenization(content)))
+
+    globalFeatures = list(set(globalFeatures))
+
+    for i in range(len(globalFeatures)):
+
+        globalFeaturesDic[globalFeatures[i]] = i
 
     return globalFeaturesDic
 
 
-# M2 = tokenization + stopwords + stemming
+def ExtractFeatureFromCorpus(globalFeaturesDic: dict, corpus: str, extractionMethod: str) -> list:
 
+    if extractionMethod in USE_TF and extractionMethod not in USE_STEMMING:
+        return FeaturesTfToGlobal(TermFrequency(RemoveStopWords(Tokenization(corpus))), globalFeaturesDic)
+    elif extractionMethod in USE_BINARY and extractionMethod not in USE_STEMMING:
+        return FeaturesTfToGlobal(GetBinaryFromTf(TermFrequency(RemoveStopWords(Tokenization(corpus)))), globalFeaturesDic)
+    elif extractionMethod in USE_TF and extractionMethod in USE_STEMMING:
+        return FeaturesTfToGlobal(TermFrequency(SnowballStem(RemoveStopWords(Tokenization(corpus)))), globalFeaturesDic)
+    elif extractionMethod in USE_BINARY and extractionMethod in USE_STEMMING:
+        return FeaturesTfToGlobal(GetBinaryFromTf(TermFrequency(SnowballStem(RemoveStopWords(Tokenization(corpus))))), globalFeaturesDic)
 
-def ExtractFeatureFromCorpusM2(corpus: str) -> dict:
-
-    return TermFrequency(SnowballStem(RemoveStopWords(Tokenization(corpus))))
-
-
-def GetM2GlobalFeaturesIndex(reviews: [Review]) -> dict:
-
-    globalFeaturesDic = {}
-    index = 0
-
-    for review in reviews:
-
-        content = review.review_content
-
-        features = SnowballStem(RemoveStopWords(Tokenization(content)))
-
-        for feature in features:
-
-            if feature not in globalFeaturesDic:
-
-                globalFeaturesDic[feature] = index
-                index += 1
-
-    return globalFeaturesDic
+    return None

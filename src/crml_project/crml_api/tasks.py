@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task, task
-from .models import Review, Performance, Training, Tag, Algorithm
+from .models import Review, Performance, Training, Tag
 # from django.db.models import Max
 from scripts import extract_features, svm_model
 from decimal import Decimal
