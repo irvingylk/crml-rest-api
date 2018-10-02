@@ -1,23 +1,24 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task, task
-from .models import Review, Performance, Training, Tag
+# from .models import Review, Performance, Training, Tag
 # from django.db.models import Max
-from scripts import extract_features, svm_model
-from decimal import Decimal
-from datetime import datetime
+# from scripts import extract_features, svm_model
+# from decimal import Decimal
+# from datetime import datetime
 
 TRAININGS_INCREMENT = 3
 
-
+'''
 class Monitor:
-
     Training_Review_Changed = False
     Periodic_Task_Exe_Count = 0
+'''
 
 
 @shared_task
 def NoticeReviewed(reviewId: str, tagId: int):
-
+    pass
+    '''
     review = Review.objects.get(reviewId=reviewId)
     tag = Tag.objects.get(tagId=tagId)
 
@@ -54,11 +55,13 @@ def NoticeReviewed(reviewId: str, tagId: int):
 
     Monitor.Training_Review_Changed = True
     print("Notice Reviewed Executed")
+    '''
 
 
 @shared_task
 def NoticeRemove(reviewId: str):
-
+    pass
+    '''
     review = Review.objects.get(reviewId=reviewId)
 
     unknown_tag = Tag.objects.get(tagId=-1)
@@ -79,19 +82,23 @@ def NoticeRemove(reviewId: str):
 
     Monitor.Training_Review_Changed = True
     print("Notice Remove Executed")
+    '''
 
 
 @task
 def UpdateClassifier():
-
+    pass
+    '''
     if Monitor.Training_Review_Changed:
         svm_model.CacheClassifier()
         Monitor.Training_Review_Changed = False
+    '''
 
 
 @task
 def RefreshClassifierHistoricalPerformance():
-
+    pass
+    '''
     extracted_reviews = Review.objects.filter(extracted=True)
     size = extracted_reviews.count()
     ordered_extracted_reviews = extracted_reviews.order_by('reviewed_time')
@@ -138,6 +145,7 @@ def RefreshClassifierHistoricalPerformance():
     Monitor.Periodic_Task_Exe_Count += 1
 
     print("Periodic Task Execute %i" % (Monitor.Periodic_Task_Exe_Count))
+    '''
 
 
 '''

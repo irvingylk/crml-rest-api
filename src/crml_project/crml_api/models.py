@@ -3,6 +3,47 @@ from django.db import models
 # Create your models here.
 
 
+class PullRequest(models.Model):
+
+    pr_id = models.CharField(max_length=50)
+    project = models.CharField(max_length=100)
+    commit_hash = models.CharField(max_length=100)
+    creation_time = models.DateTimeField(null=True, default=None)
+
+    def __str__(self):
+
+        return self.commit_hash + '_' + self.project
+
+
+class DiscussionTag(models.Model):
+
+    tag_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+class Discussion(models.Model):
+
+    discussion_id = models.CharField(max_length=50, primary_key=True)
+    pr_id = models.CharField(max_length=50)
+    content = models.CharField(max_length=5000, default='')
+    content_length = models.IntegerField(default=0)
+    is_inline_discussion = models.BooleanField(default=False)
+    reviewed = models.BooleanField(default=False)
+    creation_time = models.DateTimeField()
+    reviewed_time = models.DateTimeField(null=True, default=None)
+    project = models.CharField(max_length=100, default='')
+    tag = models.ForeignKey(DiscussionTag, related_name='tag_true')
+    predicted = models.ForeignKey(
+        DiscussionTag, related_name='tag_predicted', null=True, default=None)
+
+    def __str__(self):
+
+        return self.discussion_id
+
+
 class Tag(models.Model):
 
     tagId = models.IntegerField(primary_key=True)
@@ -153,24 +194,6 @@ class File(models.Model):
     class Meta:
 
         unique_together = ('owner', 'project', 'file_path')
-
-    def __str__(self):
-
-        return self.file_path
-
-
-class PullRequest(models.Model):
-
-    owner = models.CharField(max_length=100)
-    project = models.CharField(max_length=100)
-    pull_request = models.CharField(max_length=100)
-    commit = models.CharField(max_length=100)
-    prob = models.DecimalField(max_digits=4, decimal_places=3)
-    reason = models.CharField(max_length=500)
-
-    class Meta:
-
-        unique_together = ('owner', 'project', 'pull_request', 'commit')
 
     def __str__(self):
 

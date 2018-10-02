@@ -2,12 +2,12 @@ from rest_framework import serializers
 from . import models
 
 
-class ReviewSerializer(serializers.ModelSerializer):
+class DiscussionSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = models.Review
-        fields = ('reviewId', 'review_content', 'review_content_length',
-                  'is_inline_review', 'tag', 'project')
+        model = models.Discussion
+        fields = ('discussion_id', 'pr_id', 'content', 'content_length',
+                  'is_inline_discussion', 'tag', 'project', 'creation_time')
 
 
 class TagSerializer(serializers.ModelSerializer):

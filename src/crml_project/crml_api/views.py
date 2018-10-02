@@ -7,59 +7,118 @@ from rest_framework.decorators import api_view
 
 from . import serializers
 from . import models
-from .tasks import NoticeReviewed, NoticeRemove
 
-from scripts import extract_features, evaluate_models, svm_model
+from scripts import extract_features, evaluate_models
+
+from datetime import datetime
 
 
 # Create your views here.
 
-class ReviewApiView(APIView):
+class DiscussionApiView(APIView):
 
     def get_object(self, id):
 
         try:
-            review = models.Review.objects.get(reviewId=id)
-            return review
+            discussion = models.Discussion.objects.get(discussion_id=id)
+            return discussion
 
-        except models.Review.DoesNotExist:
+        except models.Discussion.DoesNotExist:
             return None
-
+    '''
     def get(self, request, id, format=None):
-        review = self.get_object(id)
+        discussion = self.get_object(id)
 
-        if review:
+        if discussion:
 
-            if review.reviewed:
+            if discussion.reviewed:
 
-                return Response({'type': 'true_value', 'tag': review.tag.tagId})
+                return Response({'type': 'true_value', 'tag': discussion.tag.tag_id})
 
-            model = svm_model.GetClassifier()
+            if discussion.predicted.tag_id:
 
-            if model and review.trainings_size < model[svm_model.TRAININGS_SIZE_POSITION]:
+                return Response({'type': 'prediction', 'tag': discussion.tag.tagId})
 
-                return Response({'tag': -1})
+            return Response({'type': 'prediction', 'tag': 4})
 
-            return Response({'type': 'prediction', 'tag': review.tag.tagId})
+            # model = svm_model.GetClassifier()
+            # if no predicted, use model to predict
 
         return Response({'tag': -1})
+    '''
+
+    def post(self, request, format=None):
+
+        discussion = self.get_object(request.data['discussion_id'])
+
+        if discussion:
+
+            if discussion.reviewed:
+
+                return Response({'type': 'true_value', 'tag': discussion.tag.tag_id})
+
+            if discussion.predicted:
+
+                return Response({'type': 'prediction', 'tag': discussion.predicted.tag_id})
+            else:
+                # use model to predict
+                # update db
+                return Response({'type': 'prediction', 'tag': 4})
+
+        request.data['tag'] = -1
+        serializer = serializers.DiscussionSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+        '''
+        discussion = models.Discussion.objects.get(
+            discussion_id=request.data.get('discussion_id'))
+        '''
+        model = None
+        # predicted_tag_id = -1
+
+        if model:
+            # use model to predict
+            # update db
+            return Response({'type': 'prediction', 'tag': 4})
+
+        return Response({'type': 'prediction', 'tag': 4})
 
     def put(self, request, id, format=None):
 
-        if models.Review.objects.filter(reviewId=id).count() == 0:
-            return Response({'res': 0}, status=status.HTTP_400_BAD_REQUEST)
+        if models.Discussion.objects.filter(discussion_id=id).count() == 0:
+            return Response({'res': 0})
 
-        NoticeReviewed.delay(reviewId=id, tagId=request.data.get('tag'))
-        return Response({'res': 1}, status=status.HTTP_200_OK)
+        discussion = self.get_object(id)
+        tag = models.DiscussionTag.objects.get(tag_id=request.data.get('tag'))
+
+        if not discussion.reviewed:
+            discussion.reviewed = True
+
+        if discussion.tag != tag:
+            discussion.tag = tag
+
+        discussion.reviewed_time = datetime.now()
+        discussion.save()
+
+        return Response({'res': 1})
 
     def delete(self, request, id, format=None):
 
-        if models.Review.objects.filter(reviewId=id).count() == 1:
+        if models.Discussion.objects.filter(discussion_id=id).count() == 1:
 
-            NoticeRemove.delay(reviewId=id)
-            return Response({'res': 1}, status=status.HTTP_200_OK)
+            discussion = models.Discussion.objects.get(discussion_id=id)
+            unknown = models.DiscussionTag.objects.get(tag_id=-1)
+            if discussion.tag != unknown:
+                discussion.tag = unknown
+                discussion.reviewed = False
+                discussion.reviewed_time = None
+                discussion.save()
 
-        return Response({'res': 0}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'res': 1})
+
+        return Response({'res': 0})
 
 
 def MLModels(request):
@@ -82,33 +141,6 @@ def ModelsEvolution(request):
     evolutions = evaluate_models.ModelsEvolutions()
 
     return Response(evolutions, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def Predict(request):
-
-    save(request)
-
-    try:
-        review = models.Review.objects.get(
-            reviewId=request.data.get('reviewId'))
-    except:
-        review = None
-
-    tag = None
-
-    if review:
-        tag = svm_model.MakePrediction(review)
-
-    if tag:
-
-        if tag[1]:
-            review.trainings_size = tag[1]
-            review.predicted = models.Tag.objects.get(tagId=tag[0])
-            review.save()
-
-        return Response({'res': 1, 'tag': tag[0]}, status=status.HTTP_200_OK)
-    return Response({'res': 0}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def save(request):
