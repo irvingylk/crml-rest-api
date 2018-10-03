@@ -11,7 +11,7 @@ locale-gen en_GB.UTF-8
 
 # Install Python, SQLite and pip
 apt-get update
-apt-get install -y python3-dev libmysqlclient-dev python-pip supervisor nginx git memcached erlang rabbitmq-server
+apt-get install -y python3-dev libmysqlclient-dev python-pip supervisor nginx git
 
 # Upgrade pip to the latest version.
 pip install --upgrade pip
