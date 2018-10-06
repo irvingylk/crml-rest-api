@@ -152,3 +152,10 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(minutes=5)
     }
 }
+
+# SSL
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
