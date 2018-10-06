@@ -12,6 +12,8 @@ from scripts import extract_features, evaluate_models
 
 from datetime import datetime
 
+import json
+
 
 # Create your views here.
 
@@ -133,6 +135,22 @@ def MLModels(request):
 def ReviewsStatAnalysis(request):
 
     return None
+
+
+@api_view(['POST'])
+def VerifiedDiscussions(request):
+
+    project = json.loads(request.body.decode('utf-8')).get('project')
+
+    total = models.Review.objects.filter(project=project).count()
+    reviewed = models.Review.objects.filter(
+        project=project, reviewed=True).count()
+
+    if total:
+
+        return Response({'value': int((reviewed/total)*100)})
+
+    return Response({'value': 0})
 
 
 @api_view(['GET'])

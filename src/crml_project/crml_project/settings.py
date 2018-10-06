@@ -27,7 +27,7 @@ SECRET_KEY = '!u5#0uf$-m04d92nqf#2bqe0aku3r12h$@w@rdfrfctd)2+&yt'
 DEBUG = True
 
 ALLOWED_HOSTS = ['ec2-13-238-198-127.ap-southeast-2.compute.amazonaws.com',
-                 '13.238.198.127', 'localhost', '127.0.0.1']
+                 '13.238.198.127', 'localhost', '127.0.0.1', 'www.ginvri.com']
 
 
 # Application definition

@@ -12,6 +12,8 @@ import pandas as pd
 from . import extract_features as ef
 import random
 
+from sklearn.metrics import accuracy_score
+
 
 svc_with_linear_kernel = svm.SVC(kernel='linear', C=1.0)
 linear_svc = svm.LinearSVC(C=1.0)
@@ -40,7 +42,7 @@ def run(*args):
 
     print("get reviews done")
 
-    EvaluatePerformance(RF, ef.E13, reviews)
+    EvaluatePerformance(SVM, ef.E5, reviews)
 
     print("Done!")
 
@@ -66,6 +68,8 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
     lg_f1s = []
     pc_f1s = []
     ot_f1s = []
+
+    avg_accs = []
 
     for train_index, test_index in rs:
 
@@ -100,6 +104,13 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
             reviewsPredictions[reviews[index]] = classifier.predict([featuresVector])[
                 0]
 
+        y_true = []
+        y_pred = []
+        for review in reviewsPredictions:
+
+            y_true.append(review.tag.tagId)
+            y_pred.append(reviewsPredictions[review])
+
         f1scores = CalculateF1s(reviewsPredictions)
         sa_f1s.append(f1scores[1])
         og_f1s.append(f1scores[2])
@@ -111,6 +122,8 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
             [f1scores[1], f1scores[2], f1scores[9], f1scores[10], f1scores[13], f1scores[14]]), 3)
 
         avg_f1s.append(avg_f1)
+
+        avg_accs.append(accuracy_score(y_true, y_pred))
 
     boxplot_data = {'Solution_Approach': sa_f1s,
                     'Organization': og_f1s,
@@ -137,3 +150,5 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
                       'Solution_Approach', 'Organization', 'Test', 'Logic', 'Process', 'Others', 'Average'])
 
     df.to_csv("model_overall.csv", sep=',', encoding='utf-8', index=False)
+
+    print(numpy.mean(avg_accs))

@@ -111,6 +111,8 @@ class Review(models.Model):
     predicted = models.ForeignKey(
         Tag, related_name='reviews_predicted', null=True, default=None)
     trainings_size = models.IntegerField(default=0)
+    pr_id = models.CharField(max_length=50, default='')
+    creation_time = models.DateTimeField(null=True, default=None)
 
     def __str__(self):
 
@@ -198,3 +200,36 @@ class File(models.Model):
     def __str__(self):
 
         return self.file_path
+
+
+class Commit(models.Model):
+
+    commit_hash = models.CharField(max_length=200, primary_key=True)
+    prob = models.DecimalField(max_digits=4, decimal_places=3)
+    predict_as = models.CharField(max_length=1)
+    lime = models.CharField(max_length=200)
+    project = models.CharField(max_length=50)
+
+    def __str__(self):
+
+        return self.commit_hash
+
+
+class Release(models.Model):
+
+    Project = models.CharField(
+        verbose_name='Project', null=True, max_length=100)
+    File = models.CharField(verbose_name='File', null=True, max_length=100)
+    Prob = models.FloatField(verbose_name='Prob', null=True)
+    Reason = models.CharField(verbose_name='Reason', null=True, max_length=255)
+    Release = models.CharField(
+        verbose_name='Release', null=True, max_length=100)
+    Date = models.DateField(verbose_name='Date', null=True, default=None)
+    COMM = models.FloatField(verbose_name='COMM', null=True, default=None)
+    ADEV = models.FloatField(verbose_name='ADEV', null=True, default=None)
+    DDEV = models.FloatField(verbose_name='DDEV', null=True, default=None)
+    ADD = models.FloatField(verbose_name='ADD', null=True, default=None)
+    DEL = models.FloatField(verbose_name='DEL', null=True, default=None)
+
+    def __str__(self):
+        return str(self.id)
