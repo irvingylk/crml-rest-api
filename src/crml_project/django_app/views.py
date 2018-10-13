@@ -320,7 +320,7 @@ def get_pr_chart(request):
             if c.PR not in pr_list:
                 comms = Commit.objects.filter(PR=c.PR).all()
                 for com in comms:
-                    if com.Prob != 0:
+                    if com.Prob >= 0.5:
                         risky += 1
                         break
                 else:
@@ -363,12 +363,12 @@ def get_pr_chart(request):
 
     data = [
         {
-            'name': 'Clean PR(P = 0)',
+            'name': 'Clean PR(P < 0.5)',
             'type': 'bar',
             'data': clean_data[::-1]
         },
         {
-            'name': 'Risky PR(P > 0)',
+            'name': 'Risky PR(P >= 0.5)',
             'type': 'bar',
             'data': risky_data[::-1]
         },
