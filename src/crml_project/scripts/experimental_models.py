@@ -6,14 +6,23 @@ from .extract_features import GetGlobalFeaturesIndex
 from .extract_features import ExtractFeatureFromCorpus
 from sklearn.feature_extraction.text import TfidfTransformer
 from imblearn.combine import SMOTEENN, SMOTETomek
-from sklearn.cross_validation import ShuffleSplit
+from sklearn.model_selection import RepeatedKFold
 import numpy
 import pandas as pd
 from . import extract_features as ef
-import random
 
 from sklearn.metrics import accuracy_score
 
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import SGDClassifier, LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+import random
+
+
+from sklearn.feature_selection import GenericUnivariateSelect
+from sklearn.feature_selection import chi2
 
 svc_with_linear_kernel = svm.SVC(kernel='linear', C=1.0)
 linear_svc = svm.LinearSVC(C=1.0)
@@ -25,41 +34,95 @@ rf_classifier = RandomForestClassifier(max_depth=40, random_state=0)
 sme = SMOTEENN(random_state=42)
 smt = SMOTETomek(random_state=42)
 
-SVM = "support vector machine"
-RF = "random forest"
+gnb_classifier = GaussianNB()
+mlpc_classifier = MLPClassifier(
+    solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
+SGD_classifier = SGDClassifier(loss="hinge", penalty="l2", max_iter=5)
+LR_classifier = LogisticRegression(
+    random_state=0, solver='lbfgs', multi_class='multinomial')
+DT_classifier = DecisionTreeClassifier(random_state=23)
+KNN_classifier = KNeighborsClassifier(n_neighbors=3)
+
+percentile_selector = 'percentile'
+k_best_selector = 'k_best'
+fpr_selector = 'fpr'
+fdr_selector = 'fdr'
+fwe_selector = 'fwe'
 
 
 def run(*args):
     print("start")
 
+    # classifier = LR_classifier
+
     reviews = list(Review.objects.filter(
         reviewed=True).order_by('reviewed_time'))
 
-    random.seed(0)
-    # random.shuffle(reviews)
-
-    # reviews = reviews[:249]
-
     print("get reviews done")
 
-    EvaluatePerformance(SVM, ef.E5, reviews)
+    # EvaluatePerformance(LR_classifier, ef.E19, reviews,
+    #                    "LR_E19_percentile", percentile_selector, 20)
 
+    EvaluatePerformance(LR_classifier, ef.E19, reviews,
+                        "LR_E19_percentile", percentile_selector, 20)
+    EvaluatePerformance(svm_classifier, ef.E19, reviews,
+                        "svm_E19_percentile", percentile_selector, 20)
+    EvaluatePerformance(rf_classifier, ef.E20, reviews,
+                        "rf_E20_percentile", percentile_selector, 20)
+    EvaluatePerformance(gnb_classifier, ef.E3, reviews,
+                        "gnb_E3_percentile", percentile_selector, 20)
+    EvaluatePerformance(mlpc_classifier, ef.E19, reviews,
+                        "mlpc_E19_percentile", percentile_selector, 20)
+    EvaluatePerformance(SGD_classifier, ef.E19, reviews,
+                        "sgd_E19_percentile", percentile_selector, 20)
+    EvaluatePerformance(DT_classifier, ef.E7, reviews,
+                        "dt_E7_percentile", percentile_selector, 20)
+    EvaluatePerformance(KNN_classifier, ef.E7, reviews,
+                        "knn_E7_percentile", percentile_selector, 20)
+
+    '''
+    random.seed(111)
+    random.shuffle(reviews)
+    EvaluatePerformance(classifier, ef.E19, reviews[0:150], "140")
+    EvaluatePerformance(classifier, ef.E19, reviews[0:170], "170")
+    EvaluatePerformance(classifier, ef.E19, reviews[0:190], "190")
+    EvaluatePerformance(classifier, ef.E19, reviews[0:210], "210")
+    EvaluatePerformance(classifier, ef.E19, reviews[0:230], "230")
+    EvaluatePerformance(classifier, ef.E19, reviews[0:250], "250")
+    '''
+
+    '''
+    EvaluatePerformance(classifier, ef.E1, reviews, "E1")
+    EvaluatePerformance(classifier, ef.E2, reviews, "E2")
+    EvaluatePerformance(classifier, ef.E3, reviews, "E3")
+    EvaluatePerformance(classifier, ef.E4, reviews, "E4")
+    EvaluatePerformance(classifier, ef.E5, reviews, "E5")
+    EvaluatePerformance(classifier, ef.E6, reviews, "E6")
+    EvaluatePerformance(classifier, ef.E7, reviews, "E7")
+    EvaluatePerformance(classifier, ef.E8, reviews, "E8")
+    EvaluatePerformance(classifier, ef.E9, reviews, "E9")
+    EvaluatePerformance(classifier, ef.E10, reviews, "E10")
+    EvaluatePerformance(classifier, ef.E11, reviews, "E11")
+    EvaluatePerformance(classifier, ef.E12, reviews, "E12")
+    EvaluatePerformance(classifier, ef.E13, reviews, "E13")
+    EvaluatePerformance(classifier, ef.E14, reviews, "E14")
+    EvaluatePerformance(classifier, ef.E15, reviews, "E15")
+    EvaluatePerformance(classifier, ef.E16, reviews, "E16")
+    EvaluatePerformance(classifier, ef.E17, reviews, "E17")
+    EvaluatePerformance(classifier, ef.E18, reviews, "E18")
+    EvaluatePerformance(classifier, ef.E19, reviews, "E19")
+    EvaluatePerformance(classifier, ef.E20, reviews, "E20")
+    EvaluatePerformance(classifier, ef.E21, reviews, "E21")
+    EvaluatePerformance(classifier, ef.E22, reviews, "E22")
+    EvaluatePerformance(classifier, ef.E23, reviews, "E23")
+    EvaluatePerformance(classifier, ef.E24, reviews, "E24")
+    '''
     print("Done!")
 
 
-def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
+def EvaluatePerformance(classifier, extractionMethod: str, reviews: [Review], label: str, featuresSelector, selectorParam):
 
-    review_size = len(reviews)
-    rs = ShuffleSplit(n=review_size, n_iter=100, test_size=0.4, random_state=0)
-    classifier = None
-
-    if algo == SVM:
-        classifier = svm_classifier
-    elif algo == RF:
-        classifier = rf_classifier
-
-    if classifier is None:
-        return
+    rkf = RepeatedKFold(n_splits=10, n_repeats=10, random_state=2652124)
 
     avg_f1s = []
     sa_f1s = []
@@ -71,7 +134,7 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
 
     avg_accs = []
 
-    for train_index, test_index in rs:
+    for train_index, test_index in rkf.split(reviews):
 
         global_features_index = GetGlobalFeaturesIndex(
             reviews, train_index, extractionMethod)
@@ -82,17 +145,26 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
 
             featuresVector = ExtractFeatureFromCorpus(
                 global_features_index, reviews[index].review_content, extractionMethod)
+            addExtraFeatures(featuresVector, reviews[index])
             x.append(featuresVector)
             y.append(reviews[index].tag.tagId)
 
+        transformer = None
+
         if extractionMethod in ef.USE_TFIDF:
-            x = TfidfTransformer(smooth_idf=False).fit_transform(
-                x).toarray().tolist()
+            transformer = TfidfTransformer(smooth_idf=False)
+            x = transformer.fit_transform(x, y).toarray().tolist()
 
         if extractionMethod in ef.USE_SMOTEENN:
             x, y = sme.fit_sample(x, y)
         elif extractionMethod in ef.USE_SMOTETOMEK:
             x, y = smt.fit_sample(x, y)
+
+        selector = GenericUnivariateSelect(
+            chi2, featuresSelector, param=selectorParam)
+        print(len(x[0]))
+        x = selector.fit_transform(x, y)
+        print(len(x[0]))
 
         classifier.fit(x, y)
         reviewsPredictions = {}
@@ -101,6 +173,16 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
 
             featuresVector = ExtractFeatureFromCorpus(
                 global_features_index, reviews[index].review_content, extractionMethod)
+
+            addExtraFeatures(featuresVector, reviews[index])
+
+            if transformer:
+                featuresVector = transformer.transform(
+                    [featuresVector]).toarray().tolist()[0]
+
+            featuresVector = selector.transform(
+                [featuresVector]).tolist()[0]
+
             reviewsPredictions[reviews[index]] = classifier.predict([featuresVector])[
                 0]
 
@@ -136,7 +218,8 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
     df = pd.DataFrame(boxplot_data, columns=[
                       'Solution_Approach', 'Organization', 'Test', 'Logic', 'Process', 'Others', 'Average'])
 
-    df.to_csv("model_boxplot.csv", sep=',', encoding='utf-8', index=False)
+    df.to_csv("model_boxplot_{}.csv".format(label),
+              sep=',', encoding='utf-8', index=False)
 
     overall_data = {'Solution_Approach': [round(numpy.mean(sa_f1s), 3)],
                     'Organization': [round(numpy.mean(og_f1s), 3)],
@@ -144,11 +227,26 @@ def EvaluatePerformance(algo: str, extractionMethod: str, reviews: [Review]):
                     'Logic': [round(numpy.mean(lg_f1s), 3)],
                     'Process': [round(numpy.mean(pc_f1s), 3)],
                     'Others': [round(numpy.mean(ot_f1s), 3)],
-                    'Average': [round(numpy.mean(avg_f1s), 3)]}
+                    'Average': [round(numpy.mean(avg_f1s), 3)],
+                    'ACC': [round(numpy.mean(avg_accs), 3)],
+                    'Conf': [extractionMethod]}
 
     df = pd.DataFrame(overall_data, columns=[
-                      'Solution_Approach', 'Organization', 'Test', 'Logic', 'Process', 'Others', 'Average'])
+                      'Solution_Approach', 'Organization', 'Test', 'Logic', 'Process', 'Others', 'Average', 'ACC', 'Conf'])
 
-    df.to_csv("model_overall.csv", sep=',', encoding='utf-8', index=False)
+    df.to_csv("model_overall_{}.csv".format(label),
+              sep=',', encoding='utf-8', index=False)
 
-    print(numpy.mean(avg_accs))
+
+def addExtraFeatures(X, review: Review):
+
+    size = review.review_content_length
+
+    X.append(size)
+
+    if review.is_inline_review:
+
+        X.append(1)
+    else:
+
+        X.append(0)

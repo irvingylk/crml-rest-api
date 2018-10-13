@@ -9,6 +9,8 @@ class PullRequest(models.Model):
     project = models.CharField(max_length=100)
     commit_hash = models.CharField(max_length=100)
     creation_time = models.DateTimeField(null=True, default=None)
+    number = models.CharField(max_length=10)
+    pr_time = models.DateTimeField(null=True, default=None)
 
     def __str__(self):
 
@@ -38,6 +40,9 @@ class Discussion(models.Model):
     tag = models.ForeignKey(DiscussionTag, related_name='tag_true')
     predicted = models.ForeignKey(
         DiscussionTag, related_name='tag_predicted', null=True, default=None)
+    pr_number = models.CharField(max_length=50, default="")
+    tag_desc = models.CharField(max_length=50, default="")
+    pr_time = models.DateTimeField(null=True, default=None)
 
     def __str__(self):
 
@@ -204,11 +209,13 @@ class File(models.Model):
 
 class Commit(models.Model):
 
+    pr = models.CharField(null=True, max_length=100)
     commit_hash = models.CharField(max_length=200, primary_key=True)
     prob = models.DecimalField(max_digits=4, decimal_places=3)
     predict_as = models.CharField(max_length=1)
     lime = models.CharField(max_length=200)
     project = models.CharField(max_length=50)
+    date = models.DateField(null=True)
 
     def __str__(self):
 

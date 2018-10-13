@@ -149,7 +149,7 @@ def get_clean_percent(request):
     release_count = Release.objects.filter(Date=latest_date).count()
     # select the number of files according to the latest date and Prob=0
     release_prob_count = Release.objects.filter(
-        Date=latest_date, Prob=0).count()
+        Date=latest_date, Prob__lt=0.5).count()
     # release_count cannot be zero
     try:
         percent = round(release_prob_count / release_count * 100)
