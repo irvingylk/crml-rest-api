@@ -146,7 +146,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
-
+    '''
     'update-classifier': {
         'task': 'crml_api.tasks.UpdateClassifier',
         'schedule': timedelta(minutes=30),
@@ -155,6 +155,7 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'crml_api.tasks.UpdatePerformances',
         'schedule': timedelta(hours=12),
     }
+    '''
 }
 
 # SSL
