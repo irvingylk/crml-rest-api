@@ -153,7 +153,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     'update-performances': {
         'task': 'crml_api.tasks.UpdatePerformances',
-        'schedule': timedelta(0, 0, 0, 0, 30),
+        'schedule': timedelta(0, 0, 0, 0, 15),
     }
 }
 
