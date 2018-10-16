@@ -1,24 +1,124 @@
 from __future__ import absolute_import, unicode_literals
-from celery import shared_task, task
+from celery import task
 # from .models import Review, Performance, Training, Tag
 # from django.db.models import Max
 # from scripts import extract_features, svm_model
 # from decimal import Decimal
 # from datetime import datetime
+from pymemcache.client.base import Client
+import pickle
+from crml_api.models import Discussion, Performance
+from sklearn.linear_model import LogisticRegression
+import scripts.extract_features as ef
+from imblearn.combine import SMOTETomek
+from sklearn.feature_selection import GenericUnivariateSelect
+from sklearn.feature_selection import chi2
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 TRAININGS_INCREMENT = 3
+STARTING_SIZE = 140
+
+
+@task()
+def UpdateClassifier():
+    print("Update Classifier")
+
+    clf = LogisticRegression(
+        random_state=0, solver='lbfgs', multi_class='multinomial')
+    smt = SMOTETomek(random_state=42)
+
+    discussions = list(Discussion.objects.filter(reviewed=True))
+    globalFeaturesIndex = ef.GetGlobalFeaturesIndex(
+        discussions, list(range(0, len(discussions))), ef.E19)
+
+    X, y = [], []
+    for discussion in discussions:
+        featureVector = ef.ExtractFeatureFromCorpus(
+            globalFeaturesIndex, discussion.content, ef.E19)
+        X.append(featureVector)
+        y.append(discussion.tag.tag_id)
+
+    X, y = smt.fit_sample(X, y)
+    selector = GenericUnivariateSelect(chi2, 'percentile', param=20)
+    X = selector.fit_transform(X, y)
+
+    try:
+        clf.fit(X, y)
+        print("fit done")
+        client = Client(('localhost', 11211))
+        model = (clf, globalFeaturesIndex, selector)
+        client.set('model', pickle.dumps(model))
+        model_in_bytes = client.get('model')
+        model_from_cache = pickle.loads(model_in_bytes)
+        print(len(model_from_cache))
+    except:
+        print("clf failed to cache...")
+
+
+@task()
+def UpdatePerformances():
+
+    print("Update Performance!!")
+    clf = LogisticRegression(
+        random_state=0, solver='lbfgs', multi_class='multinomial')
+    smt = SMOTETomek(random_state=42)
+
+    discussions = Discussion.objects.filter(reviewed=True)
+    projects = discussions.values('project').distinct()
+
+    for project in projects:
+
+        name = project['project']
+
+        discussions_in_project = discussions.filter(
+            project=name).order_by('reviewed_time')
+        size = len(discussions_in_project)
+
+        if size < STARTING_SIZE:
+            continue
+
+        performances = Performance.objects.filter(project=name)
+
+        new_performances = []
+
+        for i in range(STARTING_SIZE, size, 20):
+
+            globalFeaturesIndex = ef.GetGlobalFeaturesIndex(
+                discussions_in_project, list(range(0, i)), ef.E19)
+
+            X, y = [], []
+            for discussion in discussions_in_project:
+                featureVector = ef.ExtractFeatureFromCorpus(
+                    globalFeaturesIndex, discussion.content, ef.E19)
+                X.append(featureVector)
+                y.append(discussion.tag.tag_id)
+
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.10, random_state=42)
+
+            X_train, y_train = smt.fit_sample(X_train, y_train)
+            selector = GenericUnivariateSelect(chi2, 'percentile', param=20)
+            X_train = selector.fit_transform(X_train, y_train)
+            clf.fit(X_train, y_train)
+            X_test = selector.transform(X_test)
+            y_pred = clf.predict(X_test)
+            acc = accuracy_score(y_test, y_pred)
+
+            new_performances.append(Performance(
+                training_size=i, project=name, acc=acc))
+
+        performances.delete()
+        Performance.objects.bulk_create(new_performances)
+
+    print("Done Update Performance!!")
+
 
 '''
-class Monitor:
-    Training_Review_Changed = False
-    Periodic_Task_Exe_Count = 0
-'''
-
-
 @shared_task
 def NoticeReviewed(reviewId: str, tagId: int):
     pass
-    '''
+    
     review = Review.objects.get(reviewId=reviewId)
     tag = Tag.objects.get(tagId=tagId)
 
@@ -55,13 +155,13 @@ def NoticeReviewed(reviewId: str, tagId: int):
 
     Monitor.Training_Review_Changed = True
     print("Notice Reviewed Executed")
-    '''
+    
 
 
 @shared_task
 def NoticeRemove(reviewId: str):
     pass
-    '''
+    
     review = Review.objects.get(reviewId=reviewId)
 
     unknown_tag = Tag.objects.get(tagId=-1)
@@ -82,23 +182,13 @@ def NoticeRemove(reviewId: str):
 
     Monitor.Training_Review_Changed = True
     print("Notice Remove Executed")
-    '''
-
-
-@task
-def UpdateClassifier():
-    pass
-    '''
-    if Monitor.Training_Review_Changed:
-        svm_model.CacheClassifier()
-        Monitor.Training_Review_Changed = False
-    '''
+    
 
 
 @task
 def RefreshClassifierHistoricalPerformance():
     pass
-    '''
+    
     extracted_reviews = Review.objects.filter(extracted=True)
     size = extracted_reviews.count()
     ordered_extracted_reviews = extracted_reviews.order_by('reviewed_time')
@@ -145,10 +235,10 @@ def RefreshClassifierHistoricalPerformance():
     Monitor.Periodic_Task_Exe_Count += 1
 
     print("Periodic Task Execute %i" % (Monitor.Periodic_Task_Exe_Count))
-    '''
+    
 
 
-'''
+
 def UpdateClassifier():
 
     new_reviews = Review.objects.filter(reviewed=True, extracted=False)

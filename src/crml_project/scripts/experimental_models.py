@@ -2,11 +2,11 @@ from crml_api.models import Review
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from .evaluate_models import CalculateF1s
-from .extract_features import GetGlobalFeaturesIndex
+from .extract_features import GetGlobalFeaturesIndex_Temp
 from .extract_features import ExtractFeatureFromCorpus
 from sklearn.feature_extraction.text import TfidfTransformer
 from imblearn.combine import SMOTEENN, SMOTETomek
-from sklearn.model_selection import RepeatedKFold
+from sklearn.model_selection import RepeatedKFold, GridSearchCV
 import numpy
 import pandas as pd
 from . import extract_features as ef
@@ -24,13 +24,17 @@ import random
 from sklearn.feature_selection import GenericUnivariateSelect
 from sklearn.feature_selection import chi2
 
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.metrics import roc_curve, precision_recall_curve, auc, make_scorer, recall_score, precision_score, confusion_matrix
+
 svc_with_linear_kernel = svm.SVC(kernel='linear', C=1.0)
 linear_svc = svm.LinearSVC(C=1.0)
 svc_with_rbf_kernel = svm.SVC(kernel='rbf', gamma=0.7, C=1.0)
 svc_with_polynomial = svm.SVC(kernel='poly', degree=3, C=1.0)
 
 svm_classifier = svc_with_linear_kernel
-rf_classifier = RandomForestClassifier(max_depth=40, random_state=0)
+rf_classifier = RandomForestClassifier(
+    n_estimators=300, min_samples_split=3, max_depth=25, random_state=0, n_jobs=-1)
 sme = SMOTEENN(random_state=42)
 smt = SMOTETomek(random_state=42)
 
@@ -60,9 +64,12 @@ def run(*args):
 
     print("get reviews done")
 
-    # EvaluatePerformance(LR_classifier, ef.E19, reviews,
-    #                    "LR_E19_percentile", percentile_selector, 20)
+    EvaluatePerformance(LR_classifier, ef.E19, reviews,
+                        "LR_E19_percentile", percentile_selector, 20)
 
+    # EvaluatePerformance(rf_classifier, ef.E20, reviews,
+    #                    "rf_E20_percentile", percentile_selector, 20)
+    '''
     EvaluatePerformance(LR_classifier, ef.E19, reviews,
                         "LR_E19_percentile", percentile_selector, 20)
     EvaluatePerformance(svm_classifier, ef.E19, reviews,
@@ -79,7 +86,7 @@ def run(*args):
                         "dt_E7_percentile", percentile_selector, 20)
     EvaluatePerformance(KNN_classifier, ef.E7, reviews,
                         "knn_E7_percentile", percentile_selector, 20)
-
+    '''
     '''
     random.seed(111)
     random.shuffle(reviews)
@@ -136,7 +143,7 @@ def EvaluatePerformance(classifier, extractionMethod: str, reviews: [Review], la
 
     for train_index, test_index in rkf.split(reviews):
 
-        global_features_index = GetGlobalFeaturesIndex(
+        global_features_index = GetGlobalFeaturesIndex_Temp(
             reviews, train_index, extractionMethod)
 
         x, y = [], []
@@ -239,7 +246,7 @@ def EvaluatePerformance(classifier, extractionMethod: str, reviews: [Review], la
 
 
 def addExtraFeatures(X, review: Review):
-
+    '''
     size = review.review_content_length
 
     X.append(size)
@@ -250,3 +257,4 @@ def addExtraFeatures(X, review: Review):
     else:
 
         X.append(0)
+    '''

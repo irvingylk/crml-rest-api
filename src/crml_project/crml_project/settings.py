@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from celery.schedules import crontab
 from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -139,17 +140,20 @@ CACHES = {
 
 # Celery Periodic tasks
 
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
 
-    'refresh-historical-performances': {
-
-        'task': 'crml_api.tasks.RefreshClassifierHistoricalPerformance',
-        'schedule': timedelta(minutes=5)
-    },
     'update-classifier': {
-
         'task': 'crml_api.tasks.UpdateClassifier',
-        'schedule': timedelta(minutes=5)
+        'schedule': timedelta(0, 0, 0, 0, 1),
+    },
+    'update-performances': {
+        'task': 'crml_api.tasks.UpdatePerformances',
+        'schedule': timedelta(0, 0, 0, 0, 10),
     }
 }
 

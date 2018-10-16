@@ -1,4 +1,4 @@
-from crml_api.models import Review, Training
+from crml_api.models import Review, Training, Discussion
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -138,7 +138,36 @@ def GetBinaryFromTf(tf: dict) -> list:
     return tf
 
 
-def GetGlobalFeaturesIndex(review: [Review], train_index: [int], extractionMethod: str) -> dict:
+def GetGlobalFeaturesIndex(discussions: [Discussion], train_index: [int], extractionMethod: str) -> dict:
+
+    globalFeaturesDic = {}
+    globalFeatures = []
+
+    if extractionMethod not in USE_STEMMING:
+
+        for i in train_index:
+
+            content = discussions[i].content
+            globalFeatures += RemoveStopWords(Tokenization(content))
+
+    elif extractionMethod in USE_STEMMING:
+
+        for i in train_index:
+
+            content = discussions[i].content
+            globalFeatures += SnowballStem(
+                RemoveStopWords(Tokenization(content)))
+
+    globalFeatures = list(set(globalFeatures))
+
+    for i in range(len(globalFeatures)):
+
+        globalFeaturesDic[globalFeatures[i]] = i
+
+    return globalFeaturesDic
+
+
+def GetGlobalFeaturesIndex_Temp(review: [Review], train_index: [int], extractionMethod: str) -> dict:
 
     globalFeaturesDic = {}
     globalFeatures = []

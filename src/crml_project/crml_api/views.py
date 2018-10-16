@@ -13,6 +13,10 @@ from scripts import extract_features, evaluate_models
 from datetime import datetime
 
 import json
+from pymemcache.client import base
+import pickle
+
+from scripts import extract_features as ef
 
 
 # Create your views here.
@@ -65,7 +69,13 @@ class DiscussionApiView(APIView):
             else:
                 # use model to predict
                 # update db
-                return Response({'type': 'prediction', 'tag': 4})
+                prediction = predict(discussion.content)
+                if prediction:
+                    discussion.predicted = models.DiscussionTag.objects.get(
+                        tag_id=prediction)
+                    return Response({'type': 'prediction', 'tag': 4})
+
+            return
 
         request.data['tag'] = -1
         serializer = serializers.DiscussionSerializer(data=request.data)
@@ -73,19 +83,17 @@ class DiscussionApiView(APIView):
         if serializer.is_valid():
             serializer.save()
 
-        '''
-        discussion = models.Discussion.objects.get(
-            discussion_id=request.data.get('discussion_id'))
-        '''
-        model = None
-        # predicted_tag_id = -1
+        discussion = self.get_object(request.data['discussion_id'])
 
-        if model:
-            # use model to predict
-            # update db
-            return Response({'type': 'prediction', 'tag': 4})
+        if discussion:
 
-        return Response({'type': 'prediction', 'tag': 4})
+            prediction = predict(discussion.content)
+
+            if prediction:
+
+                discussion.predicted = models.DiscussionTag.objects.get(
+                    tag_id=prediction)
+                return Response({'type': 'prediction', 'tag': prediction})
 
     def put(self, request, id, format=None):
 
@@ -142,8 +150,8 @@ def VerifiedDiscussions(request):
 
     project = json.loads(request.body.decode('utf-8')).get('project')
 
-    total = models.Review.objects.filter(project=project).count()
-    reviewed = models.Review.objects.filter(
+    total = models.Discussion.objects.filter(project=project).count()
+    reviewed = models.Discussion.objects.filter(
         project=project, reviewed=True).count()
 
     if total:
@@ -153,12 +161,60 @@ def VerifiedDiscussions(request):
     return Response({'value': 0})
 
 
+@api_view(['POST'])
+def IncPreformances(request):
+
+    project = json.loads(request.body.decode('utf-8')).get('project')
+
+    performances = models.Performance.objects.filter(
+        project=project).order_by('training_size')
+
+    if performances.count() > 8:
+
+        performances = performances[-8:]
+
+    data = []
+    for p in performances:
+
+        d = {}
+        d['time'] = p.training_size
+        d['used'] = int(p.acc * 100)
+        d['total'] = 100
+        data.append(d)
+
+    return Response({'value': data})
+
+
 @api_view(['GET'])
 def ModelsEvolution(request):
 
     evolutions = evaluate_models.ModelsEvolutions()
 
     return Response(evolutions, status=status.HTTP_200_OK)
+
+
+def predict(corpus):
+
+    try:
+        client = base.Client(('localhost', 11211))
+        model_in_bytes = client.get('model')
+
+        if model_in_bytes:
+            model = pickle.loads(model_in_bytes)
+
+        clf = model[0]
+        gfi = model[1]
+        sel = model[2]
+
+        fv = ef.ExtractFeatureFromCorpus(gfi, corpus, ef.E19)
+        X = sel.transform([fv])
+        pred = clf.predict(X)[0]
+
+        return pred
+    except:
+        print("No model")
+
+    return None
 
 
 def save(request):

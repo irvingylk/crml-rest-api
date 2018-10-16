@@ -61,40 +61,14 @@ class Tag(models.Model):
 
 class Performance(models.Model):
 
-    algorithm = models.CharField(max_length=200)
-    extraction_method = models.CharField(max_length=500)
-    evaluation_method = models.CharField(max_length=500)
     training_size = models.IntegerField()
-    testing_size = models.IntegerField()
-    avg_sa_f1 = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    avg_og_f1 = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    avg_ts_f1 = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    avg_lg_f1 = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    avg_pc_f1 = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    avg_ot_f1 = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    avg_avg_f1s = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    lower_extreme = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    lower_quartile = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    median = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    upper_quartile = models.DecimalField(
-        max_digits=4, decimal_places=3, null=True, default=None)
-    upper_extreme = models.DecimalField(
+    project = models.CharField(max_length=100)
+    acc = models.DecimalField(
         max_digits=4, decimal_places=3, null=True, default=None)
 
     class Meta:
 
-        unique_together = ('algorithm', 'extraction_method',
-                           'evaluation_method', 'training_size', 'testing_size')
+        unique_together = ('project', 'training_size')
 
     def __str__(self):
 
