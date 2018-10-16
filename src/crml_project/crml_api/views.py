@@ -73,7 +73,8 @@ class DiscussionApiView(APIView):
                 if prediction:
                     discussion.predicted = models.DiscussionTag.objects.get(
                         tag_id=prediction)
-                    return Response({'type': 'prediction', 'tag': 4})
+                    discussion.save()
+                    return Response({'type': 'prediction', 'tag': prediction})
 
             return
 
@@ -93,6 +94,7 @@ class DiscussionApiView(APIView):
 
                 discussion.predicted = models.DiscussionTag.objects.get(
                     tag_id=prediction)
+                discussion.save()
                 return Response({'type': 'prediction', 'tag': prediction})
 
     def put(self, request, id, format=None):
