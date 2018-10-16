@@ -149,11 +149,11 @@ CELERY_BEAT_SCHEDULE = {
 
     'update-classifier': {
         'task': 'crml_api.tasks.UpdateClassifier',
-        'schedule': timedelta(0, 0, 0, 0, 30),
+        'schedule': timedelta(0, 0, 0, 0, 15),
     },
     'update-performances': {
         'task': 'crml_api.tasks.UpdatePerformances',
-        'schedule': timedelta(0, 0, 0, 12, 0),
+        'schedule': timedelta(0, 0, 0, 0, 30),
     }
 }
 
