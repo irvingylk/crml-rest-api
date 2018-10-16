@@ -148,11 +148,11 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
     'update-classifier': {
         'task': 'crml_api.tasks.UpdateClassifier',
-        'schedule': crontab(minute=59, hour=23),
+        'schedule': 3600,
     },
     'update-performances': {
         'task': 'crml_api.tasks.UpdatePerformances',
-        'schedule': crontab(minute=59, hour=23),
+        'schedule': 3600,
     }
 }
 
