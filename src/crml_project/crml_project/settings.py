@@ -149,10 +149,6 @@ CELERY_BEAT_SCHEDULE = {
     'update-classifier': {
         'task': 'crml_api.tasks.UpdateClassifier',
         'schedule': 3600,
-    },
-    'update-performances': {
-        'task': 'crml_api.tasks.UpdatePerformances',
-        'schedule': 3600,
     }
 }
 
