@@ -11,7 +11,7 @@ cycler==0.10.0
 Django==1.11
 django-bulk-update==2.2.0
 django-extensions==2.0.7
-djangorestframework==3.6.2
+djangorestframework==3.11.2
 idna==2.7
 imbalanced-learn==0.3.3
 kiwisolver==1.0.1
