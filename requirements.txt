@@ -33,5 +33,5 @@ requests==2.19.1
 scikit-learn==0.19.1
 scipy==1.0.1
 six==1.11.0
-urllib3==1.23
+urllib3==1.26.5
 vine==1.1.4
